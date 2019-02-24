@@ -61,7 +61,7 @@ pw_gen() {
     mapfile -tn "${length:=50}" rand </dev/urandom
 
     [[ $plain ]] &&
-        glob=[:alnum:]
+        glob='[:alnum:]'
 
     password=${rand[*]//[^${glob:-[:graph:]}]}
     password=${password:0:$length}
