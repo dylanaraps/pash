@@ -34,9 +34,7 @@ pw_del() {
 }
 
 pw_show() {
-    read -r password < <("${gpg[0]}" -dq "$1.gpg" ||
-        die "Failed to decrypt '$1'."
-    )
+    read -r password < <("${gpg[0]}" -dq "$1.gpg")
 }
 
 pw_list() {
