@@ -23,7 +23,7 @@ pw_add() {
         mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'."
     }
 
-    gpg2 -co "$1.gpg" <<< "$password"
+    "${gpg[0]}" -co "$1.gpg" <<< "$password"
 }
 
 pw_del() {
@@ -34,7 +34,7 @@ pw_del() {
 }
 
 pw_show() {
-    read -r password < <(gpg2 -dq "$1.gpg" ||
+    read -r password < <("${gpg[0]}" -dq "$1.gpg" ||
         die "Failed to decrypt '$1'."
     )
 }
@@ -125,7 +125,7 @@ get_args() {
 main() {
     get_args "$@"
 
-    hash gpg2 2>/dev/null ||
+    mapfile -t gpg < <(type -p gdg gpg2) && [[ ! -x ${gpg[0]} ]] &&
         die "GPG not found."
 
     [[ -r /dev/urandom ]] ||
