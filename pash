@@ -1,0 +1,148 @@
+#!/usr/bin/env bash
+#
+# pash - simple password manager.
+
+pw_add() {
+    [[ $OSTYPE == linux* ]] &&
+        check_entropy
+
+    generate_password
+
+    [[ $password ]] ||
+        die "Failed to generate a password."
+
+    gpg2 -co "$1.gpg" <<< "$password"
+}
+
+pw_del() {
+    read -rn 1 -p "Delete pass file '$1'? [y/n]: "; printf '\n'
+
+    [[ $REPLY == [yY] ]] &&
+        rm "$1.gpg"
+}
+
+pw_show() {
+    read -r password < <(gpg2 -dq "$1.gpg" ||
+        die "Failed to decrypt '$1'."
+    )
+}
+
+pw_list() {
+    pw_files=(*.gpg)
+
+    [[ ! -f ${pw_files[0]} ]] && {
+        printf '%s\n' "No stored passwords."
+        exit
+    }
+
+    printf '\e[1m%s\e[m:\n' "Stored Passwords"
+    printf -- ' - %s\n' "${pw_files[@]//.gpg}"
+}
+
+generate_password() {
+    # Grab '$length' number of lines from '/dev/urandom'.
+    # '$length' also controls the generated password length.
+    # This is a simple way to ensure that pash grabs enough
+    # data from '/dev/urandom' to meet the length requirement.
+    # example: 50 lines from /dev/urandom == 50 char password
+    mapfile -tn "${length:=50}" rand </dev/urandom
+    rand=${rand[*]}
+
+    [[ $plain ]] &&
+        rand=${rand//[^[:alnum:]]}
+
+    rand=${rand//[^[:graph:]]}
+    password=${rand:0:$length}
+}
+
+check_entropy() {
+    # On Linux '/dev/urandom' can be accessed even when the
+    # system has an inadequate amount of entropy. This usually
+    # occurs at boot time or on a fresh install. This function
+    # checks the system's entropy level and shows a warning if
+    # its below its set maximum value.
+    k_path=/proc/sys/kernel/random
+    entropy=$(<"${k_path}/entropy_avail")
+    needed=$(<"${k_path}/read_wakeup_threshold")
+
+    ((${entropy:=0} < ${needed:=1})) && {
+        printf '%s\n' "warn: Not enough entropy to generate a secure password."
+        read -rn 1 -p "warn: Continue anyway? [y/n]: "; printf '\n'
+
+        [[ $REPLY != [yY] ]] &&
+            exit 1
+    }
+}
+
+die() {
+    printf 'error: %s\n' "$1" >&2
+    exit 1
+}
+
+usage() { printf '%s' "\
+pash - simple password manager.
+usage: pash [add,del,show,list] [name] [-n] [-l length]
+
+-n          Limit passwords to alphanumeric characters.
+-l length   Length of generated passwords.
+-q          Don't print password to stdout.
+-h          Print this message.
+-v          Show version.
+"
+exit 1
+}
+
+get_args() {
+    # The first two arguments aren't flags, skip them.
+    shift 2
+
+    while getopts ":ncvql:" opt; do case $opt in
+        n) plain=1 ;;
+        l) length=$((OPTARG>300?300:OPTARG)) ;;
+        c) clipboard=1 ;;
+        q) quiet=1 ;;
+        v) printf '%s\n' "pash 0.01"; exit ;;
+        ?) usage ;;
+    esac; done
+}
+
+main() {
+    get_args "$@"
+
+    hash gpg2 2>/dev/null ||
+        die "GPG not found."
+
+    [[ -r /dev/urandom ]] ||
+        die "/dev/urandom is not readable."
+
+    mkdir -p "${pass_dir:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
+        die "Couldn't create password directory."
+
+    cd "$pass_dir" ||
+        die "Can't access password directory."
+
+    [[ $1 == [ads]* && -z $2 ]] &&
+        die "Missing [name] argument."
+
+    [[ $1 == [ds]* && ! -f $2.gpg ]] &&
+        die "Pass file '$2' doesn't exist."
+
+    [[ $1 == [a]* && -f $2.gpg ]] &&
+        die "Pass file '$2' already exists."
+
+    case $1 in
+        a*) pw_add  "$2" ;;
+        d*) pw_del  "$2" ;;
+        s*) pw_show "$2" ;;
+        l*) pw_list ;;
+        *)  usage ;;
+    esac
+
+    [[ -z $quiet && $password ]] &&
+        printf '%s\n' "$password"
+
+    [[ $clipboard && $password ]] && hash xclip 2>/dev/null &&
+        xclip -selection clipboard &>/dev/null <<< "$password"
+}
+
+main "$@"
