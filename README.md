@@ -30,7 +30,7 @@ usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
 - [x] Add support for not generating passwords.
 - [x] Add support for categories.
 - [ ] Add an optional `tree` view.
-- [ ] Add support for both `gpg` and `gpg2`.
+- [x] Add support for both `gpg` and `gpg2`.
 - [ ] Man page.
 - [ ] Setup automatic linting.
 - [ ] Documentation.
