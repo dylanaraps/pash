@@ -50,6 +50,9 @@ pw_list() {
 }
 
 pw_gen() {
+    [[ -r /dev/urandom ]] ||
+        die "/dev/urandom is not readable."
+
     mapfile -tn "${length:=50}" rand </dev/urandom
 
     [[ $plain ]] &&
@@ -125,9 +128,6 @@ main() {
 
     mapfile -t gpg < <(type -p gpg gpg2) && [[ ! -x ${gpg[0]} ]] &&
         die "GPG not found."
-
-    [[ -r /dev/urandom ]] ||
-        die "/dev/urandom is not readable."
 
     mkdir -p "${pass_dir:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
         die "Couldn't create password directory."
