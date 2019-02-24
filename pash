@@ -48,8 +48,7 @@ pw_list() {
         exit
     }
 
-    printf '\e[1m%s\e[m:\n' "Stored Passwords"
-    printf -- ' - %s\n' "${pw_files[@]//.gpg}"
+    printf '%s\n' "${pw_files[@]//.gpg}"
 }
 
 generate_password() {
