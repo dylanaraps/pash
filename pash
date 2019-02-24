@@ -92,6 +92,16 @@ die() {
     exit 1
 }
 
+copy() {
+    [[ $TMUX ]] && {
+        tmux load-buffer "$password"
+        return
+    }
+
+    hash xclip 2>/dev/null &&
+        xclip -selection clipboard &>/dev/null <<< "$password"
+}
+
 usage() { printf '%s' "\
 pash - simple password manager.
 usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
@@ -152,8 +162,8 @@ main() {
         *)  usage ;;
     esac
 
-    [[ $clipboard && $password ]] && hash xclip 2>/dev/null &&
-        xclip -selection clipboard &>/dev/null <<< "$password"
+    [[ $clipboard && $password ]] &&
+        copy
 
     [[ -z $quiet && $password ]] &&
         printf '%s\n' "$password"
