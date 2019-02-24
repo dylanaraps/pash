@@ -21,7 +21,7 @@ pw_add() {
 
     # Handle category in store name.
     [[ $1 == */* ]] &&
-        mkdir -p "${1%/*}" || die "Couldn't create category '$1'."
+        mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'."
 
     gpg2 -co "$1.gpg" <<< "$password"
 }
