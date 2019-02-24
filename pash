@@ -54,13 +54,13 @@ generate_password() {
     # data from '/dev/urandom' to meet the length requirement.
     # example: 50 lines from /dev/urandom == 50 char password
     mapfile -tn "${length:=50}" rand </dev/urandom
-    rand=${rand[*]}
+    password=${rand[*]}
 
     [[ $plain ]] &&
-        rand=${rand//[^[:alnum:]]}
+        password=${password//[^[:alnum:]]}
 
-    rand=${rand//[^[:graph:]]}
-    password=${rand:0:$length}
+    password=${password//[^[:graph:]]}
+    password=${password:0:$length}
 }
 
 check_entropy() {
