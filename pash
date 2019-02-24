@@ -125,7 +125,7 @@ get_args() {
 main() {
     get_args "$@"
 
-    mapfile -t gpg < <(type -p gdg gpg2) && [[ ! -x ${gpg[0]} ]] &&
+    mapfile -t gpg < <(type -p gpg gpg2) && [[ ! -x ${gpg[0]} ]] &&
         die "GPG not found."
 
     [[ -r /dev/urandom ]] ||
