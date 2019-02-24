@@ -81,10 +81,11 @@ die() {
 
 usage() { printf '%s' "\
 pash - simple password manager.
-usage: pash [add,del,show,list] [name] [-n] [-l length]
+usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
 
 -n          Limit passwords to alphanumeric characters.
 -l length   Length of generated passwords.
+-c          Copy password to clipboard.
 -q          Don't print password to stdout.
 -h          Print this message.
 -v          Show version.
