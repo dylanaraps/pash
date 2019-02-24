@@ -19,7 +19,6 @@ pw_add() {
     [[ $password ]] ||
         die "Failed to generate a password."
 
-    # Handle category in store name.
     [[ $1 == */* ]] && {
         mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'."
     }
@@ -53,11 +52,6 @@ pw_list() {
 }
 
 pw_gen() {
-    # Grab '$length' number of lines from '/dev/urandom'.
-    # '$length' also controls the generated password length.
-    # This is a simple way to ensure that pash grabs enough
-    # data from '/dev/urandom' to meet the length requirement.
-    # example: 50 lines from /dev/urandom == 50 char password
     mapfile -tn "${length:=50}" rand </dev/urandom
 
     [[ $plain ]] &&
@@ -68,16 +62,11 @@ pw_gen() {
 }
 
 check_entropy() {
-    # On Linux '/dev/urandom' can be accessed even when the
-    # system has an inadequate amount of entropy. This usually
-    # occurs at boot time or on a fresh install. This function
-    # checks the system's entropy level and shows a warning if
-    # its below its set maximum value.
-    k_path=/proc/sys/kernel/random
-    entropy=$(< "${k_path}/entropy_avail")
-    needed=$(<  "${k_path}/read_wakeup_threshold")
+    kernel_path=/proc/sys/kernel/random
+    entropy_cur=$(< "${kernel_path}/entropy_avail")
+    entropy_min=$(< "${kernel_path}/read_wakeup_threshold")
 
-    [[ ${entropy:=0} -lt ${needed:=1} ]] && {
+    [[ ${entropy_cur:=0} -lt ${entropy_min:=1} ]] && {
         printf '%s\n' "warn: Not enough entropy to generate a secure password."
         yn "warn: Continue anyway?"
 
@@ -121,7 +110,6 @@ exit 1
 }
 
 get_args() {
-    # The first two arguments aren't flags, skip them.
     shift 2
 
     while getopts ":ncvql:" opt; do case $opt in
