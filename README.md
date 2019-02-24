@@ -6,3 +6,6 @@ A simple password manager using GPG.
 
 - [x] Add support for not generating passwords.
 - [ ] Add support for categories.
+- [ ] Man page.
+- [ ] Setup automatic linting.
+- [ ] Documentation.

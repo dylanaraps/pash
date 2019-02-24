@@ -70,8 +70,8 @@ check_entropy() {
     # checks the system's entropy level and shows a warning if
     # its below its set maximum value.
     k_path=/proc/sys/kernel/random
-    entropy=$(<"${k_path}/entropy_avail")
-    needed=$(<"${k_path}/read_wakeup_threshold")
+    entropy=$(< "${k_path}/entropy_avail")
+    needed=$(<  "${k_path}/read_wakeup_threshold")
 
     [[ ${entropy:=0} -lt ${needed:=1} ]] && {
         printf '%s\n' "warn: Not enough entropy to generate a secure password."
