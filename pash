@@ -19,6 +19,10 @@ pw_add() {
     [[ $password ]] ||
         die "Failed to generate a password."
 
+    # Handle category in store name.
+    [[ $1 == */* ]] &&
+        mkdir -p "${1%/*}" || die "Couldn't create category '$1'."
+
     gpg2 -co "$1.gpg" <<< "$password"
 }
 
@@ -36,7 +40,8 @@ pw_show() {
 }
 
 pw_list() {
-    pw_files=(*.gpg)
+    shopt -s globstar
+    pw_files=(**/*.gpg)
 
     [[ ! -f ${pw_files[0]} ]] && {
         printf '%s\n' "No stored passwords."
