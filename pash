@@ -20,8 +20,9 @@ pw_add() {
         die "Failed to generate a password."
 
     # Handle category in store name.
-    [[ $1 == */* ]] &&
+    [[ $1 == */* ]] && {
         mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'."
+    }
 
     gpg2 -co "$1.gpg" <<< "$password"
 }
@@ -58,12 +59,11 @@ pw_gen() {
     # data from '/dev/urandom' to meet the length requirement.
     # example: 50 lines from /dev/urandom == 50 char password
     mapfile -tn "${length:=50}" rand </dev/urandom
-    password=${rand[*]}
 
     [[ $plain ]] &&
-        password=${password//[^[:alnum:]]}
+        glob=[:alnum:]
 
-    password=${password//[^[:graph:]]}
+    password=${rand[*]//[^${glob:-[:graph:]}]}
     password=${password:0:$length}
 }
 
