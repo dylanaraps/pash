@@ -10,7 +10,7 @@ pw_add() {
             [[ $OSTYPE == linux* ]] &&
                 check_entropy
 
-            generate_password
+            pw_gen
         ;;
 
         *)  read -rsp "Enter password: " password ;;
@@ -51,7 +51,7 @@ pw_list() {
     printf '%s\n' "${pw_files[@]//.gpg}"
 }
 
-generate_password() {
+pw_gen() {
     # Grab '$length' number of lines from '/dev/urandom'.
     # '$length' also controls the generated password length.
     # This is a simple way to ensure that pash grabs enough
