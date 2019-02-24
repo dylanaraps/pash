@@ -3,10 +3,18 @@
 # pash - simple password manager.
 
 pw_add() {
-    [[ $OSTYPE == linux* ]] &&
-        check_entropy
+    yn "Generate a password?"
 
-    generate_password
+    case $REPLY in
+        [yY])
+            [[ $OSTYPE == linux* ]] &&
+                check_entropy
+
+            generate_password
+        ;;
+
+        *)  read -rsp "Enter password: " password ;;
+    esac
 
     [[ $password ]] ||
         die "Failed to generate a password."
@@ -15,7 +23,7 @@ pw_add() {
 }
 
 pw_del() {
-    read -rn 1 -p "Delete pass file '$1'? [y/n]: "; printf '\n'
+    yn "Delete pass file '$1'?"
 
     [[ $REPLY == [yY] ]] &&
         rm "$1.gpg"
@@ -65,13 +73,18 @@ check_entropy() {
     entropy=$(<"${k_path}/entropy_avail")
     needed=$(<"${k_path}/read_wakeup_threshold")
 
-    ((${entropy:=0} < ${needed:=1})) && {
+    [[ ${entropy:=0} -lt ${needed:=1} ]] && {
         printf '%s\n' "warn: Not enough entropy to generate a secure password."
-        read -rn 1 -p "warn: Continue anyway? [y/n]: "; printf '\n'
+        yn "warn: Continue anyway?"
 
         [[ $REPLY != [yY] ]] &&
             exit 1
     }
+}
+
+yn() {
+    read -rn 1 -p "$1 [y/n]: "
+    printf '\n'
 }
 
 die() {
@@ -139,11 +152,11 @@ main() {
         *)  usage ;;
     esac
 
-    [[ -z $quiet && $password ]] &&
-        printf '%s\n' "$password"
-
     [[ $clipboard && $password ]] && hash xclip 2>/dev/null &&
         xclip -selection clipboard &>/dev/null <<< "$password"
+
+    [[ -z $quiet && $password ]] &&
+        printf '%s\n' "$password"
 }
 
 main "$@"
