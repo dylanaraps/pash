@@ -11,11 +11,7 @@ A simple password manager using GPG.
 
 ## Usage
 
-Examples:
-    - `pash add web/gmail`,
-    - `pash list`,
-    - `pash del google`,
-    - `pash show github`.
+Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`.
 
 ```
 pash - simple password manager.
