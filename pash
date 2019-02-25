@@ -163,6 +163,8 @@ main() {
     [[ $1 == [a]* && -f $2.gpg ]] &&
         die "Pass file '$2' already exists."
 
+    umask 077
+
     case $1 in
         a*) pw_add  "$2" ;;
         d*) pw_del  "$2" ;;
