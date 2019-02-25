@@ -8,21 +8,35 @@ A simple password manager using GPG.
 - `bash`
 - `gpg2`
 
+**Clipboard Support**:
+
+- `xclip` or `tmux`
+
 
 ## Usage
 
 Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`.
 
 ```
-pash - simple password manager.
-usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
+SYNOPSIS
 
--n          Limit passwords to alphanumeric characters.
--l length   Length of generated passwords.
--c          Copy password to clipboard.
--q          Don't print password to stdout.
--h          Print this message.
--v          Show version.
+pash [ add|del|show|list ] [name] [ -ncqhv ] [ -l length ]
+
+COMMANDS
+
+[a]dd [name]: Create a new entry in the password store.
+[d]el [name]: Delete an entry from the password store.
+[s]how [name]: Show password from an entry in the password store.
+[l]ist: List all entries from the password store.
+
+OPTIONS
+
+−n Limit passwords to alphanumeric characters.
+−l Length of generated passwords.
+−c Copy password to clipboard.
+−q Don't print password to stdout.
+−h Show usage and exit.
+−v Show version and exit.
 ```
 
 ## TODO
