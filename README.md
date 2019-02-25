@@ -2,6 +2,8 @@
 
 A simple password manager using GPG.
 
+## Table of Contents
+
 <!-- vim-markdown-toc GFM -->
 
 * [Dependencies](#dependencies)
