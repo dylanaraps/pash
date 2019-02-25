@@ -45,6 +45,6 @@ OPTIONS
 - [x] Add support for categories.
 - [ ] Add an optional `tree` view.
 - [x] Add support for both `gpg` and `gpg2`.
-- [ ] Man page.
-- [ ] Setup automatic linting.
-- [ ] Documentation.
+- [x] Man page.
+- [x] Setup automatic linting.
+- [x] Documentation.
