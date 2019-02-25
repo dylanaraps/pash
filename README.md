@@ -46,6 +46,7 @@ OPTIONS
 −l Length of generated passwords.
 −c Copy password to clipboard.
 −q Don't print password to stdout.
+-t Print list output as a tree.
 −h Show usage and exit.
 −v Show version and exit.
 ```
@@ -61,7 +62,7 @@ The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOM
 
 - [x] Add support for not generating passwords.
 - [x] Add support for categories.
-- [ ] Add an optional `tree` view.
+- [x] Add an optional `tree` view.
 - [x] Add support for both `gpg` and `gpg2`.
 - [x] Man page.
 - [x] Setup automatic linting.

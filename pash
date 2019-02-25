@@ -37,15 +37,24 @@ pw_show() {
 }
 
 pw_list() {
-    shopt -s globstar
-    pw_files=(**/*.gpg)
+    shopt -s globstar nullglob
 
-    [[ ! -f ${pw_files[0]} ]] && {
-        printf '%s\n' "No stored passwords."
-        exit
-    }
+    for pwrd in **; do
+        [[ -d $pwrd ]] &&
+            dir=/
 
-    printf '%s\n' "${pw_files[@]//.gpg}"
+        nest=${pwrd//[^\/]}
+        pwrd=${pwrd//[^[:print:]]/^[}
+        pwrd=${pwrd//.gpg}
+
+        if [[ -z $tree ]]; then
+            printf '%s\n' "$pwrd"
+
+        else
+            printf '%s\n' "${nest//\//│  }├─ ${pwrd##*/}${dir}"
+            dir=
+        fi
+    done
 }
 
 pw_gen() {
@@ -103,6 +112,7 @@ usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
 -l length   Length of generated passwords.
 -c          Copy password to clipboard.
 -q          Don't print password to stdout.
+-t          Print list output as a tree.
 -h          Print this message.
 -v          Show version.
 "
@@ -110,13 +120,17 @@ exit 1
 }
 
 get_args() {
-    shift 2
+    [[ $1 != l* ]] &&
+        shift 1
 
-    while getopts ":ncvql:" opt; do case $opt in
+    shift 1
+
+    while getopts ":ncvqtl:" opt; do case $opt in
         n) plain=1 ;;
         l) length=${OPTARG//[^0-9]} ;;
         c) clipboard=1 ;;
         q) quiet=1 ;;
+        t) tree=1 ;;
         v) printf '%s\n' "pash 0.01"; exit ;;
         ?) usage ;;
     esac; done
