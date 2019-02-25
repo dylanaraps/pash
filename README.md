@@ -7,7 +7,7 @@ A simple password manager using GPG.
 * [Dependencies](#dependencies)
 * [Usage](#usage)
 * [FAQ](#faq)
-        * [Where are passwords stored?](#where-are-passwords-stored)
+    * [Where are passwords stored?](#where-are-passwords-stored)
 * [TODO](#todo)
 
 <!-- vim-markdown-toc -->
@@ -50,7 +50,7 @@ OPTIONS
 
 ## FAQ
 
-#### Where are passwords stored?
+### Where are passwords stored?
 
 The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOME/.local/share}/pash}`.
 
