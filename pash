@@ -39,6 +39,9 @@ pw_show() {
 pw_list() {
     shopt -s globstar nullglob
 
+    [[ $tree ]] &&
+        printf '%s\n' "pash"
+
     for pwrd in **; do
         [[ -d $pwrd ]] &&
             dir=/
@@ -55,6 +58,9 @@ pw_list() {
             dir=
         fi
     done
+
+    [[ $tree ]] &&
+        printf '└%s\b┘\n' "${nest//\//──┴}"
 }
 
 pw_gen() {
