@@ -1,0 +1,64 @@
+.TH PASH 1
+.SH NAME
+pash \- simple pasword manager
+
+
+.SH SYNOPSIS
+.B pash
+[\fBadd|del|show|list\fR]
+[name]
+[\fB-ncqhv\fR]
+[\fB-l\fR length]
+
+
+.SH DESCRIPTION
+.B pash
+simple pasword manager
+
+
+.SH COMMANDS
+.TP
+.BR [a]dd
+[name]:
+Create a new entry in the password store.
+.TP
+
+.BR [d]el
+[name]:
+Delete an entry from the password store.
+.TP
+
+.BR [s]how
+[name]:
+Show password from an entry in the password store.
+.TP
+
+.BR [l]ist:
+List all entries from the password store.
+.TP
+
+.SH OPTIONS
+.TP
+.BR \-n
+Limit passwords to alphanumeric characters.
+.TP
+
+.BR \-l
+Length of generated passwords.
+.TP
+
+.BR \-c
+Copy password to clipboard.
+.TP
+
+.BR \-q
+Don't print password to stdout.
+.TP
+
+.BR \-h
+Show usage and exit.
+.TP
+
+.BR \-v
+Show version and exit.
+.TP
