@@ -39,6 +39,13 @@ OPTIONS
 −v Show version and exit.
 ```
 
+## FAQ
+
+#### Where are passwords stored?
+
+The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOME/.local/share}/pash}`.
+
+
 ## TODO
 
 - [x] Add support for not generating passwords.
