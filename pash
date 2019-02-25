@@ -115,7 +115,7 @@ get_args() {
 
     while getopts ":ncvql:" opt; do case $opt in
         n) plain=1 ;;
-        l) length=$((OPTARG>300?300:OPTARG)) ;;
+        l) length=${OPTARG//[^0-9]} ;;
         c) clipboard=1 ;;
         q) quiet=1 ;;
         v) printf '%s\n' "pash 0.01"; exit ;;
