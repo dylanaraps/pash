@@ -19,9 +19,6 @@ pw_add() {
     [[ $password ]] ||
         die "Failed to generate a password."
 
-    [[ $1 == */* ]] &&
-        { mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'.";}
-
     "${gpg[0]}" -co "$1.gpg" <<< "$password"
 }
 
@@ -162,6 +159,12 @@ main() {
 
     [[ $1 == [a]* && -f $2.gpg ]] &&
         die "Pass file '$2' already exists."
+
+    [[ $2 == */* && $2 == *../* ]] &&
+        die "Category went out of bounds."
+
+    [[ $2 == */* ]] &&
+        { mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'.";}
 
     umask 077
 
