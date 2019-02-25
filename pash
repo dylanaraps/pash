@@ -19,9 +19,8 @@ pw_add() {
     [[ $password ]] ||
         die "Failed to generate a password."
 
-    [[ $1 == */* ]] && {
-        mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'."
-    }
+    [[ $1 == */* ]] &&
+        { mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'.";}
 
     "${gpg[0]}" -co "$1.gpg" <<< "$password"
 }
