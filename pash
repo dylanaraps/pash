@@ -112,7 +112,7 @@ copy() {
 
 usage() { printf '%s' "\
 pash - simple password manager.
-usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
+usage: pash [add|del|show|list] [name] [flags]
 
 -c          Copy password to clipboard.
 -l length   Length of generated passwords.

@@ -31,7 +31,7 @@ Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show githu
 ```
 SYNOPSIS
 
-pash [ add|del|show|list ] [name] [ -ncqhv ] [ -l length ]
+pash [ add|del|show|list ] [name] [ -ncqthv ] [ -l length ]
 
 COMMANDS
 
@@ -42,11 +42,11 @@ COMMANDS
 
 OPTIONS
 
--t Print list output as a tree.
 −c Copy password to clipboard.
 −l Length of generated passwords.
 −n Limit passwords to alphanumeric characters.
 −q Don't print password to stdout.
+-t Print list output as a tree.
 −h Show usage and exit.
 −v Show version and exit.
 ```
