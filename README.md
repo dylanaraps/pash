@@ -16,8 +16,8 @@ A simple password manager using GPG.
 
 ## Dependencies
 
-- `bash`
-- `gpg2`
+- `bash 4+`
+- `gpg` or `gpg2`
 
 **Clipboard Support**:
 
