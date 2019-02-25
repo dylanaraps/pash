@@ -2,6 +2,17 @@
 
 A simple password manager using GPG.
 
+```
+pash
+├─ dev/
+│  ├─ github
+├─ internet/
+│  ├─ graalians
+│  ├─ pixeljoint
+│  ├─ nixers
+└──┘
+```
+
 ## Table of Contents
 
 <!-- vim-markdown-toc GFM -->
