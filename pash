@@ -108,9 +108,9 @@ usage() { printf '%s' "\
 pash - simple password manager.
 usage: pash [add|del|show|list] [name] [-n,-q,-c] [-l length]
 
--n          Limit passwords to alphanumeric characters.
--l length   Length of generated passwords.
 -c          Copy password to clipboard.
+-l length   Length of generated passwords.
+-n          Limit passwords to alphanumeric characters.
 -q          Don't print password to stdout.
 -t          Print list output as a tree.
 -h          Print this message.
@@ -126,9 +126,9 @@ get_args() {
     shift 1
 
     while getopts ":ncvqtl:" opt; do case $opt in
-        n) plain=1 ;;
-        l) length=${OPTARG//[^0-9]} ;;
         c) clipboard=1 ;;
+        l) length=${OPTARG//[^0-9]} ;;
+        n) plain=1 ;;
         q) quiet=1 ;;
         t) tree=1 ;;
         v) printf '%s\n' "pash 0.01"; exit ;;

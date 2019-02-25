@@ -42,11 +42,11 @@ COMMANDS
 
 OPTIONS
 
-−n Limit passwords to alphanumeric characters.
-−l Length of generated passwords.
-−c Copy password to clipboard.
-−q Don't print password to stdout.
 -t Print list output as a tree.
+−c Copy password to clipboard.
+−l Length of generated passwords.
+−n Limit passwords to alphanumeric characters.
+−q Don't print password to stdout.
 −h Show usage and exit.
 −v Show version and exit.
 ```
