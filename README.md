@@ -35,8 +35,8 @@ pash [ add|del|show|list ] [name] [ -ncqhv ] [ -l length ]
 
 COMMANDS
 
-[a]dd [name]: Create a new entry in the password store.
-[d]el [name]: Delete an entry from the password store.
+[a]dd  [name]: Create a new entry in the password store.
+[d]el  [name]: Delete an entry from the password store.
 [s]how [name]: Show password from an entry in the password store.
 [l]ist: List all entries from the password store.
 
