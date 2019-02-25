@@ -163,8 +163,11 @@ main() {
     [[ $2 == */* && $2 == *../* ]] &&
         die "Category went out of bounds."
 
+    [[ $2 == /* ]] &&
+        die "Category can't start with '/'."
+
     [[ $2 == */* ]] &&
-        { mkdir -p "${1%/*}" || die "Couldn't create category '${1%/*}'.";}
+        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'.";}
 
     umask 077
 
