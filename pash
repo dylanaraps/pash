@@ -40,7 +40,7 @@ pw_list() {
     if [[ $tree ]]; then
         tree
     else
-        printf '%s\e[4D\e[K\n' **/*.gpg
+        printf -- '%s\e[4D\e[K\n' **/*.gpg
     fi
 }
 
