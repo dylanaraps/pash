@@ -37,8 +37,15 @@ pw_show() {
 pw_list() {
     shopt -s globstar nullglob
 
-    [[ $tree ]] &&
-        printf '%s\n' "pash"
+    if [[ $tree ]]; then
+        tree
+    else
+        printf '%s\e[4D\e[K\n' **/*.gpg
+    fi
+}
+
+tree() {
+    printf '%s\n' "pash"
 
     for pwrd in **; do
         [[ -d $pwrd ]] &&
@@ -48,17 +55,11 @@ pw_list() {
         pwrd=${pwrd//[^[:print:]]/^[}
         pwrd=${pwrd//.gpg}
 
-        if [[ -z $tree ]]; then
-            printf '%s\n' "$pwrd"
-
-        else
-            printf '%s\n' "${nest//\//│  }├─ ${pwrd##*/}${dir}"
-            dir=
-        fi
+        printf '%s\n' "${nest//\//│  }├─ ${pwrd##*/}${dir}"
+        dir=
     done
 
-    [[ $tree ]] &&
-        printf '└%s\b┘\n' "${nest//\//──┴}"
+    printf '└%s\b┘\n' "${nest//\//──┴}"
 }
 
 yn() {
