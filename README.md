@@ -77,3 +77,4 @@ The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOM
 - [x] Man page.
 - [x] Setup automatic linting.
 - [x] Documentation.
+- [ ] Add support for using a public key.
