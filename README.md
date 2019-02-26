@@ -42,7 +42,7 @@ Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show githu
 ```
 SYNOPSIS
 
-pash [ add|del|show|list ] [name] [ -ncqthv ] [ -l length ]
+pash [ add|del|show|list ] [name] [ -cqthv ] [ -l length ]
 
 COMMANDS
 
