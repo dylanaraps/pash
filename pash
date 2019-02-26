@@ -7,13 +7,14 @@ pw_add() {
 
     case $REPLY in
         [yY])
-            [[ $OSTYPE == linux* ]] &&
-                check_entropy
-
-            pw_gen
+            length=${length:=50}
+            password=$("${gpg[0]}" --armor --gen-random 0 "$length")
+            password=${password:0:length}
         ;;
 
-        *)  read -rsp "Enter password: " password ;;
+        *)
+            read -rsp "Enter password: " password
+        ;;
     esac
 
     [[ $password ]] ||
@@ -60,33 +61,6 @@ pw_list() {
         printf '└%s\b┘\n' "${nest//\//──┴}"
 }
 
-pw_gen() {
-    [[ -r /dev/urandom ]] ||
-        die "/dev/urandom is not readable."
-
-    mapfile -tn "${length:=50}" rand </dev/urandom
-
-    [[ $plain ]] &&
-        glob='[:alnum:]'
-
-    password=${rand[*]//[^${glob:-[:graph:]}]}
-    password=${password:0:$length}
-}
-
-check_entropy() {
-    kernel_path=/proc/sys/kernel/random
-    entropy_cur=$(< "${kernel_path}/entropy_avail")
-    entropy_min=$(< "${kernel_path}/read_wakeup_threshold")
-
-    [[ ${entropy_cur:=0} -lt ${entropy_min:=1} ]] && {
-        printf '%s\n' "warn: Not enough entropy to generate a secure password."
-        yn "warn: Continue anyway?"
-
-        [[ $REPLY != [yY] ]] &&
-            exit 1
-    }
-}
-
 yn() {
     read -rn 1 -p "$1 [y/n]: "
     printf '\n'
@@ -113,7 +87,6 @@ usage: pash [add|del|show|list] [name] [flags]
 
 -c          Copy password to clipboard.
 -l length   Length of generated passwords.
--n          Limit passwords to alphanumeric characters.
 -q          Don't print password to stdout.
 -t          Print list output as a tree.
 -h          Print this message.
@@ -131,7 +104,6 @@ get_args() {
     while getopts ":ncvqtl:" opt; do case $opt in
         c) clipboard=1 ;;
         l) length=${OPTARG//[^0-9]} ;;
-        n) plain=1 ;;
         q) quiet=1 ;;
         t) tree=1 ;;
         v) printf '%s\n' "pash 0.01"; exit ;;

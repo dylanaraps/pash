@@ -55,7 +55,6 @@ OPTIONS
 
 −c Copy password to clipboard.
 −l Length of generated passwords.
-−n Limit passwords to alphanumeric characters.
 −q Don't print password to stdout.
 -t Print list output as a tree.
 −h Show usage and exit.
