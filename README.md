@@ -38,28 +38,20 @@ pash
 
 ## Usage
 
-Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`.
+Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`, `pash copy github`.
 
 ```
 SYNOPSIS
 
-pash [ add|del|show|list ] [name] [ -cqthv ] [ -l length ]
+pash [ add|del|show|list|copy ] [name]
 
 COMMANDS
 
-[a]dd  [name]: Create a new entry in the password store.
-[d]el  [name]: Delete an entry from the password store.
-[s]how [name]: Show password from an entry in the password store.
-[l]ist: List all entries from the password store.
-
-OPTIONS
-
-−c Copy password to clipboard.
-−l Length of generated passwords.
-−q Don't print password to stdout.
--t Print list output as a tree.
-−h Show usage and exit.
-−v Show version and exit.
+[a]dd  [name] - Create a new password entry.
+[c]opy [name] - Copy entry to the clipboard.
+[d]el  [name] - Delete a password entry.
+[l]ist        - List all entries.
+[s]how [name] - Show password for an entry.
 ```
 
 ## FAQ
@@ -68,7 +60,7 @@ OPTIONS
 
 I was looking for a CLI password manager (*written in `bash`*) and wasn't happy with the options I had found. They either had multiple instances of `eval` (*on user inputted data*), lots of unsafe `bash` (*no where near being `shellcheck` compliant.*) or they were overly complex. The opposites for what I'd want in a password manager.
 
-I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdir` and optionally `xclip`.*) and the codebase is minimal (*150~ lines*). `gpg` is used to generate passwords and store the generated passwords in encrypted files.
+I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdir` and optionally `xclip`.*) and the codebase is minimal (*100~ lines*). `gpg` is used to generate passwords and store the generated passwords in encrypted files.
 
 ### Where are passwords stored?
 
@@ -84,4 +76,4 @@ The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOM
 - [x] Man page.
 - [x] Setup automatic linting.
 - [x] Documentation.
-- [ ] Add support for using a public key.
+- [ ] ~~Add support for using a public key.~~
