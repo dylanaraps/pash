@@ -23,8 +23,10 @@ pw_add() {
 pw_del() {
     yn "Delete pass file '$1'?"
 
-    [[ $REPLY == [yY] ]] &&
+    [[ $REPLY == [yY] ]] && {
         rm "$1.gpg"
+        rmdir -p "${1%/*}" 2>/dev/null
+    }
 }
 
 pw_show() {
