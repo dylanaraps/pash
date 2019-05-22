@@ -7,14 +7,11 @@ pw_add() {
 
     case $REPLY in
         [yY])
-            length=${length:=50}
-            password=$("${gpg[0]}" --armor --gen-random 0 "$length")
-            password=${password:0:length}
+            password=$("${gpg[0]}" --armor --gen-random 0 50)
+            password=${password:0:50}
         ;;
 
-        *)
-            read -rsp "Enter password: " password
-        ;;
+        *)  read -rsp "Enter password: " password ;;
     esac
 
     [[ $password ]] ||
@@ -32,31 +29,34 @@ pw_del() {
 
 pw_show() {
     read -r password < <("${gpg[0]}" -dq "$1.gpg")
+
+    [[ ${FUNCNAME[1]} != pw_copy ]] &&
+        printf '%s\n' "$password"
+}
+
+pw_copy() {
+    pw_show "$1"
+
+    if [[ $TMUX ]]; then
+        tmux load-buffer "$password"
+    else
+        hash xclip && xclip -selection clipboard <<< "$password"
+    fi
 }
 
 pw_list() {
     shopt -s globstar nullglob
 
-    if [[ $tree ]]; then
-        tree
-    else
-        printf -- '%s\e[4D\e[K\n' **/*.gpg
-    fi
-}
-
-tree() {
     printf '%s\n' "pash"
 
     for pwrd in **; do
-        [[ -d $pwrd ]] &&
-            dir=/
+        [[ -d $pwrd ]] && dir=/ || dir=
 
         nest=${pwrd//[^\/]}
         pwrd=${pwrd//[^[:print:]]/^[}
         pwrd=${pwrd//.gpg}
 
         printf '%s\n' "${nest//\//│  }├─ ${pwrd##*/}${dir}"
-        dir=
     done
 
     printf '└%s\b┘\n' "${nest//\//──┴}"
@@ -72,48 +72,20 @@ die() {
     exit 1
 }
 
-copy() {
-    [[ $TMUX ]] && {
-        tmux load-buffer "$password"
-        return
-    }
-
-    hash xclip 2>/dev/null &&
-        xclip -selection clipboard &>/dev/null <<< "$password"
-}
-
 usage() { printf '%s' "\
-pash - simple password manager.
-usage: pash [add|del|show|list] [name] [flags]
-
--c          Copy password to clipboard.
--l length   Length of generated passwords.
--q          Don't print password to stdout.
--t          Print list output as a tree.
--h          Print this message.
--v          Show version.
+pash 0.1.0 - simple password manager.
+=> [a]dd  [name] - Create a new password entry.
+=> [c]opy [name] - Copy entry to the clipboard.
+=> [d]el  [name] - Delete a password entry.
+=> [l]ist        - List all entries.
+=> [s]how [name] - Show password for an entry.
 "
 exit 1
 }
 
-get_args() {
-    [[ $1 != l* ]] &&
-        shift 1
-
-    shift 1
-
-    while getopts ":ncvqtl:" opt; do case $opt in
-        c) clipboard=1 ;;
-        l) length=${OPTARG//[^0-9]} ;;
-        q) quiet=1 ;;
-        t) tree=1 ;;
-        v) printf '%s\n' "pash 0.01"; exit ;;
-        ?) usage ;;
-    esac; done
-}
-
 main() {
-    get_args "$@"
+    [[ $1 == -? || -z $1 ]] &&
+        usage
 
     mapfile -t gpg < <(type -p gpg gpg2) && [[ ! -x ${gpg[0]} ]] &&
         die "GPG not found."
@@ -146,17 +118,12 @@ main() {
 
     case $1 in
         a*) pw_add  "$2" ;;
+        c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
         l*) pw_list ;;
-        *)  usage ;;
+        *)  usage
     esac
-
-    [[ $clipboard && $password ]] &&
-        copy
-
-    [[ -z $quiet && $password ]] &&
-        printf '%s\n' "$password"
 }
 
 main "$@"
