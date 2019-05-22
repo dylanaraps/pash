@@ -96,10 +96,10 @@ main() {
     cd "$pass_dir" ||
         die "Can't access password directory."
 
-    [[ $1 == [ads]* && -z $2 ]] &&
+    [[ $1 == [acds]* && -z $2 ]] &&
         die "Missing [name] argument."
 
-    [[ $1 == [ds]* && ! -f $2.gpg ]] &&
+    [[ $1 == [cds]* && ! -f $2.gpg ]] &&
         die "Pass file '$2' doesn't exist."
 
     [[ $1 == [a]* && -f $2.gpg ]] &&
