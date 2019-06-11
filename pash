@@ -17,7 +17,7 @@ pw_add() {
     [[ $password ]] ||
         die "Failed to generate a password."
 
-    "${gpg[0]}" -co "$1.gpg" <<< "$password"
+    GPG_TTY=$(tty) "${gpg[0]}" -co "$1.gpg" <<< "$password"
 }
 
 pw_del() {
