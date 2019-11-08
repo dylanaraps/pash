@@ -86,7 +86,7 @@ pash 0.1.0 - simple password manager.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
 
-Using a key pair: export PASH_KEYID=F1DE636E
+Using a key pair: export PASH_KEYID=XXXXXXXX
 "
 exit 1
 }

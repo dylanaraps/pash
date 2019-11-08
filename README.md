@@ -74,7 +74,7 @@ Set the environment variable `PASH_KEYID` to the ID of the key you'd like to enc
 Example:
 
 ```sh
-export PASH_KEYID=F1DE636E
+export PASH_KEYID=XXXXXXXX
 
 # This can also be an email.
 export PASH_KEYID=dylan.araps@gmail.com
