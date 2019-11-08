@@ -7,17 +7,20 @@ pw_add() {
 
     case $REPLY in
         [yY])
-            password=$("${gpg[0]}" --armor --gen-random 0 50)
-            password=${password:0:50}
+            pass=$("${gpg[0]}" --armor --gen-random 0 50)
+            pass=${pass:0:50}
         ;;
 
-        *)  read -rsp "Enter password: " password ;;
+        *)  read -rsp "Enter password: " pass ;;
     esac
 
-    [[ $password ]] ||
+    [[ $pass ]] ||
         die "Failed to generate a password."
 
-    GPG_TTY=$(tty) "${gpg[0]}" -co "$1.gpg" <<< "$password"
+    [[ $PASH_KEYID ]] &&
+        flags=(--trust-model always -aer "$PASH_KEYID")
+
+    GPG_TTY=$(tty) "${gpg[0]}" "${flags[@]:--c}" -o "$1.gpg" <<< "$pass"
 }
 
 pw_del() {
@@ -30,19 +33,19 @@ pw_del() {
 }
 
 pw_show() {
-    read -r password < <("${gpg[0]}" -dq "$1.gpg")
+    read -r pass < <("${gpg[0]}" -dq "$1.gpg")
 
     [[ ${FUNCNAME[1]} != pw_copy ]] &&
-        printf '%s\n' "$password"
+        printf '%s\n' "$pass"
 }
 
 pw_copy() {
     pw_show "$1"
 
     if [[ $TMUX ]]; then
-        tmux load-buffer "$password"
+        tmux load-buffer "$pass"
     else
-        hash xclip && xclip -selection clipboard <<< "$password"
+        hash xclip && xclip -selection clipboard <<< "$pass"
     fi
 }
 
@@ -74,13 +77,16 @@ die() {
     exit 1
 }
 
-usage() { printf '%s' "\
+usage() { printf %s "\
 pash 0.1.0 - simple password manager.
+
 => [a]dd  [name] - Create a new password entry.
 => [c]opy [name] - Copy entry to the clipboard.
 => [d]el  [name] - Delete a password entry.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
+
+Using a key pair: export PASH_KEYID=F1DE636E
 "
 exit 1
 }
@@ -119,7 +125,7 @@ main() {
     umask 077
 
     case $1 in
-        a*) pw_add  "$2" ;;
+        a*) pw_add  "$2" && printf '%s\n' "Saved '$2' to store." ;;
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
