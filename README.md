@@ -23,6 +23,8 @@ pash
     * [How does this differ from `pass` or etc?](#how-does-this-differ-from-pass-or-etc)
     * [Where are passwords stored?](#where-are-passwords-stored)
     * [How can I use a public key?](#how-can-i-use-a-public-key)
+    * [How do I set the password length?](#how-do-i-set-the-password-length)
+    * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
 
 <!-- vim-markdown-toc -->
 
@@ -74,8 +76,38 @@ Set the environment variable `PASH_KEYID` to the ID of the key you'd like to enc
 Example:
 
 ```sh
+# Default: 'unset'.
 export PASH_KEYID=XXXXXXXX
 
 # This can also be an email.
 export PASH_KEYID=dylan.araps@gmail.com
+
+# This can also be used as a one-off.
+PASH_KEYID=XXXXXXXX pash add github
+```
+
+### How do I set the password length?
+
+Set the environment variable `PASH_LENGTH` to a valid integer.
+
+Example:
+
+```sh
+# Default: '50'.
+export PASH_LENGTH=50
+
+# This can also be used as a one-off.
+PASH_LENGTH=10 pash add github
+```
+
+### How do I change the password store location?
+
+Set the environment variable `PASH_DIR` to a directory.
+
+```sh
+# Default: '~/.local/share/pash'.
+export PASH_DIR=~/.local/share/pash
+
+# This can also be used as a one-off.
+PASH_DIR=/mnt/drive/pash pash list
 ```

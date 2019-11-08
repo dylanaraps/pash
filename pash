@@ -7,8 +7,8 @@ pw_add() {
 
     case $REPLY in
         [yY])
-            pass=$("${gpg[0]}" --armor --gen-random 0 50)
-            pass=${pass:0:50}
+            pass=$("${gpg[0]}" --armor --gen-random 0 "${PASH_LENGTH:-50}")
+            pass=${pass:0:${PASH_LENGTH:-50}}
         ;;
 
         *)  read -rsp "Enter password: " pass ;;
@@ -87,6 +87,8 @@ pash 1.0.0 - simple password manager.
 => [s]how [name] - Show password for an entry.
 
 Using a key pair: export PASH_KEYID=XXXXXXXX
+Password length:  export PASH_LENGTH=50
+Store location:   export PASH_DIR=~/.local/share/pash
 "
 exit 1
 }
@@ -98,10 +100,10 @@ main() {
     mapfile -t gpg < <(type -p gpg gpg2) && [[ ! -x ${gpg[0]} ]] &&
         die "GPG not found."
 
-    mkdir -p "${pass_dir:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
+    mkdir -p "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
         die "Couldn't create password directory."
 
-    cd "$pass_dir" ||
+    cd "$PASH_DIR" ||
         die "Can't access password directory."
 
     [[ $1 == [acds]* && -z $2 ]] &&
@@ -120,7 +122,7 @@ main() {
         die "Category can't start with '/'."
 
     [[ $2 == */* ]] &&
-        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'.";}
+        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'."; }
 
     umask 077
 
