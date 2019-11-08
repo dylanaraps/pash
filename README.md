@@ -22,7 +22,7 @@ pash
 * [FAQ](#faq)
     * [How does this differ from `pass` or etc?](#how-does-this-differ-from-pass-or-etc)
     * [Where are passwords stored?](#where-are-passwords-stored)
-* [TODO](#todo)
+    * [How can I use a public key?](#how-can-i-use-a-public-key)
 
 <!-- vim-markdown-toc -->
 
@@ -60,20 +60,22 @@ COMMANDS
 
 I was looking for a CLI password manager (*written in `bash`*) and wasn't happy with the options I had found. They either had multiple instances of `eval` (*on user inputted data*), lots of unsafe `bash` (*nowhere near being `shellcheck` compliant.*) or they were overly complex. The opposites for what I'd want in a password manager.
 
-I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdir` and optionally `xclip`.*) and the codebase is minimal (*100~ lines*). `gpg` is used to generate passwords and store the generated passwords in encrypted files.
+I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdir` and optionally `xclip`.*) and the codebase is minimal (*100~ lines*). `gpg` is used to generate passwords and store them in encrypted files.
 
 ### Where are passwords stored?
 
 The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOME/.local/share}/pash}`.
 
 
-## TODO
+### How can I use a public key?
 
-- [x] Add support for not generating passwords.
-- [x] Add support for categories.
-- [x] Add an optional `tree` view.
-- [x] Add support for both `gpg` and `gpg2`.
-- [x] Man page.
-- [x] Setup automatic linting.
-- [x] Documentation.
-- [ ] ~~Add support for using a public key.~~
+Set the environment variable `PASH_KEYID` to the ID of the key you'd like to encrypt and decrypt passwords with.
+
+Example:
+
+```sh
+export PASH_KEYID=F1DE636E
+
+# This can also be an email.
+export PASH_KEYID=dylan.araps@gmail.com
+```
