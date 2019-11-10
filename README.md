@@ -25,6 +25,7 @@ pash
     * [How can I use a public key?](#how-can-i-use-a-public-key)
     * [How do I set the password length?](#how-do-i-set-the-password-length)
     * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
+    * [How do I rename an entry?](#how-do-i-rename-an-entry)
 
 <!-- vim-markdown-toc -->
 
@@ -111,3 +112,7 @@ export PASH_DIR=~/.local/share/pash
 # This can also be used as a one-off.
 PASH_DIR=/mnt/drive/pash pash list
 ```
+
+### How do I rename an entry?
+
+It's a file! Standard UNIX utilities can be used here.
