@@ -67,7 +67,7 @@ I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdi
 
 ### Where are passwords stored?
 
-The passwords are store in GPG encrypted files located at `${XDG_DATA_HOME:=$HOME/.local/share}/pash}`.
+The passwords are stored in GPG encrypted files located at `${XDG_DATA_HOME:=$HOME/.local/share}/pash}`.
 
 
 ### How can I use a public key?
