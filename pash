@@ -20,14 +20,14 @@ pw_add() {
     [[ $PASH_KEYID ]] &&
         flags=(--trust-model always -aer "$PASH_KEYID")
 
-    GPG_TTY=$(tty) "${gpg[0]}" "${flags[@]:--c}" -o "$1.gpg" <<< "$pass"
+    echo "$pass" | GPG_TTY=$(tty) "${gpg[0]}" "${flags[@]:--c}" -o "$1.gpg"
 }
 
 pw_del() {
     yn "Delete pass file '$1'?"
 
     [[ $REPLY == [yY] ]] && {
-        rm "$1.gpg"
+        rm -f "$1.gpg"
         rmdir -p "${1%/*}" 2>/dev/null
     }
 }
@@ -45,7 +45,7 @@ pw_copy() {
     if [[ $TMUX ]]; then
         tmux load-buffer "$pass"
     else
-        hash xclip && xclip -selection clipboard <<< "$pass"
+        hash xclip && echo "$pass" | xclip -selection clipboard
     fi
 }
 
@@ -112,7 +112,7 @@ main() {
     [[ $1 == [cds]* && ! -f $2.gpg ]] &&
         die "Pass file '$2' doesn't exist."
 
-    [[ $1 == [a]* && -f $2.gpg ]] &&
+    [[ $1 == a* && -f $2.gpg ]] &&
         die "Pass file '$2' already exists."
 
     [[ $2 == */* && $2 == *../* ]] &&
