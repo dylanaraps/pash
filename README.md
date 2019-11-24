@@ -38,21 +38,27 @@ pash
 
 - `xclip` or `tmux`
 
+**Git Support**
+
+- `git`
+
 
 ## Usage
 
-Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`, `pash copy github`.
+Examples: `pash add web/gmail`, `pash list`, `pash del google`, `pash show github`, `pash copy github`, `pash git push`.
 
 ```
 SYNOPSIS
 
 pash [ add|del|show|list|copy ] [name]
+     [ git ] [ any git command ]
 
 COMMANDS
 
 [a]dd  [name] - Create a new password entry.
 [c]opy [name] - Copy entry to the clipboard.
 [d]el  [name] - Delete a password entry.
+[g]it  [cmd]  - Git in PASH_DIR.
 [l]ist        - List all entries.
 [s]how [name] - Show password for an entry.
 ```

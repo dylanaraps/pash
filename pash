@@ -67,6 +67,10 @@ pw_list() {
     printf '└%s\b┘\n' "${nest//\//──┴}"
 }
 
+pw_git() {
+    git "${@:2}"
+}
+
 yn() {
     read -rn 1 -p "$1 [y/n]: "
     printf '\n'
@@ -83,6 +87,7 @@ pash 1.0.0 - simple password manager.
 => [a]dd  [name] - Create a new password entry.
 => [c]opy [name] - Copy entry to the clipboard.
 => [d]el  [name] - Delete a password entry.
+=> [g]it  [cmd]  - Git in PASH_DIR.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
 
@@ -130,6 +135,7 @@ main() {
         a*) pw_add  "$2" && printf '%s\n' "Saved '$2' to store." ;;
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
+        g*) pw_git  "$@" ;;
         s*) pw_show "$2" ;;
         l*) pw_list ;;
         *)  usage
