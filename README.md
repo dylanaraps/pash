@@ -26,6 +26,7 @@ pash
     * [How do I set the password length?](#how-do-i-set-the-password-length)
     * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
     * [How do I rename an entry?](#how-do-i-rename-an-entry)
+    * [How can I extend `pash`?](#how-can-i-extend-pash)
 
 <!-- vim-markdown-toc -->
 
@@ -116,3 +117,23 @@ PASH_DIR=/mnt/drive/pash pash list
 ### How do I rename an entry?
 
 It's a file! Standard UNIX utilities can be used here.
+
+### How can I extend `pash`?
+
+A shell function can be used to add new commands and functionality to `pash`. The following example adds `pash git` to execute `git` commands on the password store.
+
+```sh
+pash() {
+    case $1 in
+        g*)
+            cd "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}"
+            shift
+            git "$@"
+        ;;
+
+        *)
+            command pash "$@"
+        ;;
+    esac
+}
+```
