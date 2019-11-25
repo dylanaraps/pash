@@ -1,0 +1,147 @@
+#!/bin/sh
+#
+# pash - simple password manager.
+
+pw_add() {
+    pass_name=$1
+    set -- -c
+
+    yn "Generate a password?"
+
+    if glob "$REPLY" '[yY]'; then
+        pass=$("$gpg" --gen-random --armor "${PASH_LENGTH:-50}" |\
+               cut -c -"${PASH_LENGTH:-50}")
+
+    else
+        printf 'Enter password: '
+        stty -echo
+        read -r pass
+        stty echo
+        printf '\n'
+    fi
+
+    [ "$pass" ] ||
+        die "Failed to generate a password."
+
+    [ "$PASH_KEYID" ] &&
+        set -- --trust-model always -aer "$PASH_KEYID"
+
+    echo "$pass" | GPG_TTY=$(tty) "$gpg" "$@" -o "$pass_name.gpg"
+}
+
+pw_del() {
+    yn "Delete pass file '$1'?"
+
+    glob "$REPLY" '[yY]' && {
+        rm -f "$1.gpg"
+        rmdir -p "${1%/*}" 2>/dev/null
+    }
+}
+
+pw_show() {
+    pass=$("$gpg" -dq "$1.gpg")
+
+    [ "$2" ] || printf '%s\n' "$pass"
+}
+
+pw_copy() {
+    pw_show "$1" copy
+
+    if [ "$TMUX" ]; then
+        tmux load-buffer "$pass"
+    else
+        has xclip && echo "$pass" | xclip -selection clipboard
+    fi
+}
+
+pw_list() {
+    if has tree; then
+        tree --noreport
+    else
+        find . -mindepth 1
+    fi
+}
+
+yn() {
+    printf '%s [y/n]: ' "$1"
+    stty -icanon
+    REPLY=$(dd ibs=1 count=1 2>/dev/null)
+    stty icanon
+    printf '\n'
+}
+
+die() {
+    printf 'error: %s\n' "$1" >&2
+    exit 1
+}
+
+usage() { printf %s "\
+pash 1.0.0 - simple password manager.
+
+=> [a]dd  [name] - Create a new password entry.
+=> [c]opy [name] - Copy entry to the clipboard.
+=> [d]el  [name] - Delete a password entry.
+=> [l]ist        - List all entries.
+=> [s]how [name] - Show password for an entry.
+
+Using a key pair: export PASH_KEYID=XXXXXXXX
+Password length:  export PASH_LENGTH=50
+Store location:   export PASH_DIR=~/.local/share/pash
+"
+exit 1
+}
+
+has() {
+    command -v "$1" >/dev/null 2>&1
+}
+
+glob() {
+    case $1 in $2) return 0; esac; return 1
+}
+
+main() {
+    [ "$1" = '-?' ] || [ -z "$1" ] &&
+        usage
+
+    has gpg  && gpg=gpg
+    has gpg2 && gpg=gpg2
+
+    [ "$gpg" ] || die "GPG not found."
+
+    mkdir -p "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
+        die "Couldn't create password directory."
+
+    cd "$PASH_DIR" ||
+        die "Can't access password directory."
+
+    glob "$1" '[acds]*' && [ -z "$2" ] &&
+        die "Missing [name] argument."
+
+    glob "$1" '[cds]*' && [ ! -f "$2.gpg" ] &&
+        die "Pass file '$2' doesn't exist."
+
+    glob "$1" 'a*' && [ -f "$2.gpg" ] &&
+        die "Pass file '$2' already exists."
+
+    glob "$2" '*/*' && glob "$2" '*../*' &&
+        die "Category went out of bounds."
+
+    glob "$2" '/*' &&
+        die "Category can't start with '/'."
+
+    glob "$2" '*/*' &&
+        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'."; }
+
+    umask 077
+
+    case $1 in
+        a*) pw_add  "$2" && printf '%s\n' "Saved '$2' to store." ;;
+        c*) pw_copy "$2" ;;
+        d*) pw_del  "$2" ;;
+        s*) pw_show "$2" ;;
+        l*) pw_list ;;
+        *)  usage
+    esac
+}
+
+main "$@"
