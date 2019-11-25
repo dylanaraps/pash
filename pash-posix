@@ -4,26 +4,55 @@
 
 pw_add() {
     pass_name=$1
-    set -- -c
 
     if yn "Generate a password?"; then
-        pass=$("$gpg" --gen-random --armor "${PASH_LENGTH:-50}" |\
+        # Use 'gpg' to generate the password. This
+        # could have been 'openssl', '/dev/[u]random'
+        # or another utility, however sticking to 'gpg'
+        # removes the need for another dependency.
+        #
+        # The '-a' flag outputs the random bytes as
+        # a 'base64' encoded string to allow for the
+        # password to be used as well, a password.
+        #
+        # The 'cut' is required to actually truncate
+        # the password to the set length as the 'base64'
+        # encoding makes the resulting string longer
+        # than the given length.
+        pass=$("$gpg" --gen-random -a "${PASH_LENGTH:-50}" |\
                cut -c -"${PASH_LENGTH:-50}")
 
     else
         printf 'Enter password: '
+
+        # Disable echoing of output to the
+        # terminal while reading user input.
         stty -echo
+
         read -r pass
+
+        # Enable echoing and leave the terminal
+        # how we *should* have found it.
         stty echo
+
         printf '\n'
     fi
 
     [ "$pass" ] ||
         die "Failed to generate a password."
 
-    [ "$PASH_KEYID" ] &&
+    # Mimic the use of an array for storing
+    # arguments by... using the function's
+    # argument list. This is very apt... isn't it?
+    if [ "$PASH_KEYID" ]; then
         set -- --trust-model always -aer "$PASH_KEYID"
+    else
+        set -- -c
+    fi
 
+    # Use 'gpg' to store the password in an encrypted file.
+    # The 'GPG_TTY' environment variable is set to workaround
+    # cases where 'gpg' cannot find an attached terminal.
     echo "$pass" | GPG_TTY=$(tty) "$gpg" "$@" -o "$pass_name.gpg"
 }
 
@@ -37,6 +66,10 @@ pw_del() {
 pw_show() {
     pass=$("$gpg" -dq "$1.gpg")
 
+    # If '$2' is defined, don't print the password
+    # to the terminal. This is useful when the user
+    # would just like the password copied to the
+    # clipboard.
     [ "$2" ] || printf '%s\n' "$pass"
 }
 
@@ -117,6 +150,8 @@ main() {
     [ "$1" = '-?' ] || [ -z "$1" ] &&
         usage
 
+    # Look for both 'gpg' and 'gpg2',
+    # preferring 'gpg2' if it is available.
     hash gpg  2>/dev/null && gpg=gpg
     hash gpg2 2>/dev/null && gpg=gpg2
 
