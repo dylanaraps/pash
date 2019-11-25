@@ -111,6 +111,9 @@ glob() {
     # for simple string comparisons against globs.
     #
     # Example: if glob "Hello World" '* World'; then
+    #
+    # Disable this warning as it is the intended behavior.
+    # shellcheck disable=2254
     case $1 in $2) return 0; esac; return 1
 }
 
