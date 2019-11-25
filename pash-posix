@@ -3,7 +3,7 @@
 # pash - simple password manager.
 
 pw_add() {
-    pass_name=$1
+    name=$1
 
     if yn "Generate a password?"; then
         # Use 'gpg' to generate the password. This could have
@@ -18,7 +18,7 @@ pw_add() {
         # The 'cut' is required to actually truncate the password
         # to the set length as the 'base64' encoding makes the
         # resulting string longer than the given length.
-        pass=$("$gpg" --gen-random -a "${PASH_LENGTH:-50}" |\
+        pass=$("$gpg" -a --gen-random 1 "${PASH_LENGTH:-50}" |\
                cut -c -"${PASH_LENGTH:-50}")
 
     else
@@ -31,8 +31,7 @@ pw_add() {
         printf '\n'
     fi
 
-    [ "$pass" ] ||
-        die "Failed to generate a password."
+    [ "$pass" ] || die "Failed to generate a password."
 
     # Mimic the use of an array for storing arguments by... using
     # the function's argument list. This is very apt isn't it?
@@ -45,7 +44,8 @@ pw_add() {
     # Use 'gpg' to store the password in an encrypted file. The
     # 'GPG_TTY' environment variable is set to workaround cases
     # where 'gpg' cannot find an attached terminal.
-    echo "$pass" | GPG_TTY=$(tty) "$gpg" "$@" -o "$pass_name.gpg"
+    echo "$pass" | GPG_TTY=$(tty) "$gpg" "$@" -o "$name.gpg" &&
+        printf '%s\n' "Saved '$name' to the store."
 }
 
 pw_del() {
@@ -69,8 +69,9 @@ pw_copy() {
 
     if [ "$TMUX" ]; then
         tmux load-buffer "$pass"
-    else
-        hash xclip && echo "$pass" | xclip -selection clipboard
+
+    elif hash xclip; then
+        echo "$pass" | xclip -selection clipboard
     fi
 }
 
@@ -135,6 +136,8 @@ exit 1
 }
 
 main() {
+    : "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}"
+
     [ "$1" = '-?' ] || [ -z "$1" ] &&
         usage
 
@@ -145,7 +148,7 @@ main() {
 
     [ "$gpg" ] || die "GPG not found."
 
-    mkdir -p "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
+    mkdir -p "$PASH_DIR" ||
         die "Couldn't create password directory."
 
     cd "$PASH_DIR" ||
@@ -166,13 +169,15 @@ main() {
     glob "$2" '/*' &&
         die "Category can't start with '/'."
 
-    glob "$2" '*/*' &&
-        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'."; }
+    glob "$2" '*/*' && {
+        mkdir -p "${2%/*}" ||
+            die "Couldn't create category '${2%/*}'."
+    }
 
     umask 077
 
     case $1 in
-        a*) pw_add  "$2" && printf '%s\n' "Saved '$2' to the store." ;;
+        a*) pw_add  "$2" ;;
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
