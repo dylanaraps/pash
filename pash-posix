@@ -92,7 +92,7 @@ yn() {
 
     # Read a single byte from stdin using 'dd'. POSIX 'read' has
     # no support for single/'N' byte based input from the user.
-    REPLY=$(dd ibs=1 count=1 2>/dev/null)
+    answer=$(dd ibs=1 count=1 2>/dev/null)
 
     # Disable raw input, leaving the terminal how we *should*
     # have found it.
@@ -103,7 +103,7 @@ yn() {
     # Handle the answer here directly, enabling this function's
     # return status to be used in place of checking for '[yY]'
     # throughout this program.
-    glob "$REPLY" '[yY]' || return 1 && return 0
+    glob "$answer" '[yY]' || return 1 && return 0
 }
 
 glob() {
@@ -149,7 +149,8 @@ main() {
     hash gpg  2>/dev/null && gpg=gpg
     hash gpg2 2>/dev/null && gpg=gpg2
 
-    [ "$gpg" ] || die "GPG not found."
+    [ "$gpg" ] ||
+        die "GPG not found."
 
     mkdir -p "$PASH_DIR" ||
         die "Couldn't create password directory."
@@ -172,10 +173,8 @@ main() {
     glob "$2" '/*' &&
         die "Category can't start with '/'."
 
-    glob "$2" '*/*' && {
-        mkdir -p "${2%/*}" ||
-            die "Couldn't create category '${2%/*}'."
-    }
+    glob "$2" '*/*' && { mkdir -p "${2%/*}" ||
+        die "Couldn't create category '${2%/*}'."; }
 
     umask 077
 
