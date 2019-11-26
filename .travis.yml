@@ -12,7 +12,7 @@ install:
   - shellcheck() { "shellcheck-${scversion}/shellcheck" "$@"; }
 
 script:
-    - shellcheck pash pash-posix -e SC2244 -e SC1090 -e SC1091
+    - shellcheck pash pash.bash
     # Check for lines longer than 80 chars.
     - if grep '.\{81\}' pash; then (exit 1); else (exit 0); fi
-    - if grep '.\{81\}' pash-posix; then (exit 1); else (exit 0); fi
+    - if grep '.\{81\}' pash.bash; then (exit 1); else (exit 0); fi
