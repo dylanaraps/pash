@@ -1,0 +1,139 @@
+#!/usr/bin/env bash
+#
+# pash - simple password manager.
+
+pw_add() {
+    yn "Generate a password?"
+
+    case $REPLY in
+        [yY])
+            pass=$("${gpg[0]}" --armor --gen-random 0 "${PASH_LENGTH:-50}")
+            pass=${pass:0:${PASH_LENGTH:-50}}
+        ;;
+
+        *)  read -rsp "Enter password: " pass ;;
+    esac
+
+    [[ $pass ]] ||
+        die "Failed to generate a password."
+
+    [[ $PASH_KEYID ]] &&
+        flags=(--trust-model always -aer "$PASH_KEYID")
+
+    echo "$pass" | GPG_TTY=$(tty) "${gpg[0]}" "${flags[@]:--c}" -o "$1.gpg"
+}
+
+pw_del() {
+    yn "Delete pass file '$1'?"
+
+    [[ $REPLY == [yY] ]] && {
+        rm -f "$1.gpg"
+        rmdir -p "${1%/*}" 2>/dev/null
+    }
+}
+
+pw_show() {
+    read -r pass < <("${gpg[0]}" -dq "$1.gpg")
+
+    [[ ${FUNCNAME[1]} != pw_copy ]] &&
+        printf '%s\n' "$pass"
+}
+
+pw_copy() {
+    pw_show "$1"
+
+    if [[ $TMUX ]]; then
+        tmux load-buffer "$pass"
+    else
+        hash xclip && echo "$pass" | xclip -selection clipboard
+    fi
+}
+
+pw_list() {
+    shopt -s globstar nullglob
+
+    printf '%s\n' "pash"
+
+    for pwrd in **; do
+        [[ -d $pwrd ]] && dir=/ || dir=
+
+        nest=${pwrd//[^\/]}
+        pwrd=${pwrd//[^[:print:]]/^[}
+        pwrd=${pwrd//.gpg}
+
+        printf '%s\n' "${nest//\//│  }├─ ${pwrd##*/}${dir}"
+    done
+
+    printf '└%s\b┘\n' "${nest//\//──┴}"
+}
+
+yn() {
+    read -rn 1 -p "$1 [y/n]: "
+    printf '\n'
+}
+
+die() {
+    printf 'error: %s\n' "$1" >&2
+    exit 1
+}
+
+usage() { printf %s "\
+pash 1.0.0 - simple password manager.
+
+=> [a]dd  [name] - Create a new password entry.
+=> [c]opy [name] - Copy entry to the clipboard.
+=> [d]el  [name] - Delete a password entry.
+=> [l]ist        - List all entries.
+=> [s]how [name] - Show password for an entry.
+
+Using a key pair: export PASH_KEYID=XXXXXXXX
+Password length:  export PASH_LENGTH=50
+Store location:   export PASH_DIR=~/.local/share/pash
+"
+exit 1
+}
+
+main() {
+    [[ $1 == -? || -z $1 ]] &&
+        usage
+
+    mapfile -t gpg < <(type -p gpg gpg2) && [[ ! -x ${gpg[0]} ]] &&
+        die "GPG not found."
+
+    mkdir -p "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}" ||
+        die "Couldn't create password directory."
+
+    cd "$PASH_DIR" ||
+        die "Can't access password directory."
+
+    [[ $1 == [acds]* && -z $2 ]] &&
+        die "Missing [name] argument."
+
+    [[ $1 == [cds]* && ! -f $2.gpg ]] &&
+        die "Pass file '$2' doesn't exist."
+
+    [[ $1 == a* && -f $2.gpg ]] &&
+        die "Pass file '$2' already exists."
+
+    [[ $2 == */* && $2 == *../* ]] &&
+        die "Category went out of bounds."
+
+    [[ $2 == /* ]] &&
+        die "Category can't start with '/'."
+
+    [[ $2 == */* ]] &&
+        { mkdir -p "${2%/*}" || die "Couldn't create category '${2%/*}'."; }
+
+    umask 077
+
+    case $1 in
+        a*) pw_add  "$2" && printf '%s\n' "Saved '$2' to store." ;;
+        c*) pw_copy "$2" ;;
+        d*) pw_del  "$2" ;;
+        s*) pw_show "$2" ;;
+        l*) pw_list ;;
+        *)  usage
+    esac
+}
+
+main "$@"

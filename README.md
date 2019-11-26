@@ -1,6 +1,6 @@
 # pash
 
-A simple password manager using GPG.
+A simple password manager using GPG written in POSIX `sh`.
 
 ```
 pash
@@ -18,6 +18,7 @@ pash
 <!-- vim-markdown-toc GFM -->
 
 * [Dependencies](#dependencies)
+* [Installation](#installation)
 * [Usage](#usage)
 * [FAQ](#faq)
     * [How does this differ from `pass` or etc?](#how-does-this-differ-from-pass-or-etc)
@@ -32,12 +33,20 @@ pash
 
 ## Dependencies
 
-- `bash 4+`
 - `gpg` or `gpg2`
 
 **Clipboard Support**:
 
 - `xclip` or `tmux`
+
+
+## Installation
+
+Two versions of `pash` are available, one written in POSIX `sh` and the other written in `bash`. They are both functionally identical and the `Makefile` gives the choice of which version you would like to install.
+
+- `make install` (POSIX `sh`)
+- `make install-bash` (`bash`)
+- Or just `cp` the desired version to your `$PATH`.
 
 
 ## Usage
@@ -62,9 +71,9 @@ COMMANDS
 
 ### How does this differ from `pass` or etc?
 
-I was looking for a CLI password manager (*written in `bash`*) and wasn't happy with the options I had found. They either had multiple instances of `eval` (*on user inputted data*), lots of unsafe `bash` (*nowhere near being `shellcheck` compliant.*) or they were overly complex. The opposites for what I'd want in a password manager.
+I was looking for a CLI password manager (*written in shell*) and wasn't happy with the options I had found. They either had multiple instances of `eval` (*on user inputted data*), lots of unsafe `bash` (*nowhere near being `shellcheck` compliant.*) or they were overly complex. The opposites for what I'd want in a password manager.
 
-I decided to write my own. `pash` is written in pure `bash` (*minus `gpg`, `mkdir` and optionally `xclip`.*) and the codebase is minimal (*100~ lines*). `gpg` is used to generate passwords and store them in encrypted files.
+I decided to write my own. `pash` is written in POSIX `sh` and the codebase is minimal (*100~ lines*). `gpg` is used to generate passwords and store them in encrypted files.
 
 ### Where are passwords stored?
 
