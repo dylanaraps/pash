@@ -44,7 +44,7 @@ pw_add() {
     # Use 'gpg' to store the password in an encrypted file. The
     # 'GPG_TTY' environment variable is set to workaround cases
     # where 'gpg' cannot find an attached terminal.
-    echo "$pass" | GPG_TTY=$(tty) "$gpg" "$@" -o "$name.gpg" &&
+    echo "$pass" | "$gpg" "$@" -o "$name.gpg" &&
         printf '%s\n' "Saved '$name' to the store."
 }
 
@@ -175,6 +175,8 @@ main() {
 
     glob "$2" '*/*' && { mkdir -p "${2%/*}" ||
         die "Couldn't create category '${2%/*}'."; }
+
+    export GPG_TTY=${GPG_TTY:-$(tty)}
 
     umask 077
 
