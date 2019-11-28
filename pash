@@ -94,7 +94,7 @@ yn() {
     # Handle the answer here directly, enabling this function's
     # return status to be used in place of checking for '[yY]'
     # throughout this program.
-    glob "$answer" '[yY]' || return 1 && return 0
+    glob "$answer" '[yY]'
 }
 
 glob() {
