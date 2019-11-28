@@ -60,12 +60,10 @@ pw_show() {
 }
 
 pw_copy() {
-    pass=$(pw_show "$1")
-
     # Disable warning against words-splitting as it is safe
     # and intentional (globbing is disabled).
     # shellcheck disable=2086
-    printf %s "$pass" | ${PASH_CLIP:-xclip -selection clipboard}
+    pw_show "$1" | ${PASH_CLIP:-xclip -selection clipboard}
 }
 
 pw_list() {
