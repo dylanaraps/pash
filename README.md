@@ -18,7 +18,6 @@ pash
 <!-- vim-markdown-toc GFM -->
 
 * [Dependencies](#dependencies)
-* [Installation](#installation)
 * [Usage](#usage)
 * [FAQ](#faq)
     * [How does this differ from `pass` or etc?](#how-does-this-differ-from-pass-or-etc)
@@ -38,16 +37,7 @@ pash
 
 **Clipboard Support**:
 
-- `xclip` or `tmux`
-
-
-## Installation
-
-Two versions of `pash` are available, one written in POSIX `sh` and the other written in `bash`. They are both functionally identical and the `Makefile` gives the choice of which version you would like to install.
-
-- `make install` (POSIX `sh`)
-- `make install-bash` (`bash`)
-- Or just `cp` the desired version to your `$PATH`.
+- `xclip` (*can be customized through `PASH_CLIP`*).
 
 
 ## Usage
