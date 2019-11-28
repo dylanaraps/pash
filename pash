@@ -56,16 +56,11 @@ pw_del() {
 }
 
 pw_show() {
-    pass=$("$gpg" -dq "$1.gpg")
-
-    # If '$2' is defined, don't print the password to the
-    # terminal. For example, this is used when the password is
-    # copied to the clipboard.
-    [ "$2" ] || printf '%s\n' "$pass"
+    "$gpg" -dq "$1.gpg"
 }
 
 pw_copy() {
-    pw_show "$1" copy
+    pass=$(pw_show "$1")
 
     # Disable warning against words-splitting as it is safe
     # and intentional (globbing is disabled).
