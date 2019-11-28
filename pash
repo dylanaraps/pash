@@ -44,7 +44,7 @@ pw_add() {
     # Use 'gpg' to store the password in an encrypted file. The
     # 'GPG_TTY' environment variable is set to workaround cases
     # where 'gpg' cannot find an attached terminal.
-    echo "$pass" | "$gpg" "$@" -o "$name.gpg" &&
+    printf %s "$pass" | "$gpg" "$@" -o "$name.gpg" &&
         printf '%s\n' "Saved '$name' to the store."
 }
 
@@ -67,12 +67,16 @@ pw_show() {
 pw_copy() {
     pw_show "$1" copy
 
-    if [ "$TMUX" ]; then
-        tmux load-buffer "$pass"
+    # Disable warning against words-splitting as it is safe
+    # and intentional. The '-f' disables globbing while the
+    # clipboard string is split.
+    # shellcheck disable=2086
+    {
+        set -f
+        set +f ${PASH_CLIP:-xclip -selection clipboard}
+    }
 
-    elif hash xclip; then
-        echo "$pass" | xclip -selection clipboard
-    fi
+    printf %s "$pass" | "$@"
 }
 
 pw_list() {
@@ -134,6 +138,7 @@ pash 1.0.0 - simple password manager.
 Using a key pair: export PASH_KEYID=XXXXXXXX
 Password length:  export PASH_LENGTH=50
 Store location:   export PASH_DIR=~/.local/share/pash
+Clipboard tool:   export PASH_CLIP=''
 "
 exit 1
 }

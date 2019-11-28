@@ -28,6 +28,7 @@ pash
     * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
     * [How do I rename an entry?](#how-do-i-rename-an-entry)
     * [How can I extend `pash`?](#how-can-i-extend-pash)
+* [How do I change the clipboard tool?](#how-do-i-change-the-clipboard-tool)
 
 <!-- vim-markdown-toc -->
 
@@ -145,4 +146,13 @@ pash() {
         ;;
     esac
 }
+```
+
+## How do I change the clipboard tool?
+
+Set the environment variable `PASH_CLIP` to a command.
+
+```sh
+# Default: 'xclip -selection clipboard'.
+export PASH_DIR='xclip -selection clipboard'
 ```
