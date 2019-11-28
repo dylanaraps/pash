@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh -f
 #
 # pash - simple password manager.
 
@@ -68,15 +68,9 @@ pw_copy() {
     pw_show "$1" copy
 
     # Disable warning against words-splitting as it is safe
-    # and intentional. The '-f' disables globbing while the
-    # clipboard string is split.
+    # and intentional (globbing is disabled).
     # shellcheck disable=2086
-    {
-        set -f
-        set +f ${PASH_CLIP:-xclip -selection clipboard}
-    }
-
-    printf %s "$pass" | "$@"
+    printf %s "$pass" | ${PASH_CLIP:-xclip -selection clipboard}
 }
 
 pw_list() {
