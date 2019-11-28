@@ -179,7 +179,7 @@ main() {
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
-        l*) pw_list ;;
+        l*) pw_list | sed 's/\.gpg$//' ;;
         *)  usage
     esac
 }
