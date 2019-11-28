@@ -69,8 +69,10 @@ pw_copy() {
 pw_list() {
     if hash tree 2>/dev/null; then
         tree --noreport
+
     else
-        find . -mindepth 1
+        set +f
+        find -- * -type f
     fi
 }
 
