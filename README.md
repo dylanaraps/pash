@@ -57,6 +57,13 @@ COMMANDS
 [d]el  [name] - Delete a password entry.
 [l]ist        - List all entries.
 [s]how [name] - Show password for an entry.
+
+OPTIONS
+
+Using a key pair: export PASH_KEYID=XXXXXXXX
+Password length:  export PASH_LENGTH=50
+Store location:   export PASH_DIR=~/.local/share/pash
+Clipboard tool:   export PASH_CLIP='xclip -selection clipboard'
 ```
 
 ## FAQ
