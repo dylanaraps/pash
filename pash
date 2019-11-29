@@ -12,7 +12,7 @@ pw_add() {
         #
         # The 'dd' command is then used to read only the desired
         # password length.
-        pass=$(tr -dc "${PASH_PATTERN:-_A-Z-a-z-0-9}" </dev/urandom |
+        pass=$(LC_ALL=C tr -dc "${PASH_PATTERN:-_A-Z-a-z-0-9}" < /dev/urandom |
             dd ibs=1 obs=1 count="${PASH_LENGTH:-50}" 2>/dev/null)
 
     else
