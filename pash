@@ -170,8 +170,12 @@ main() {
     glob "$2" '*/*' && { mkdir -p "${2%/*}" ||
         die "Couldn't create category '${2%/*}'."; }
 
+    # Set 'GPG_TTY' to the current 'TTY' if it
+    # is unset. Fixes a somewhat rare `gpg` issue.
     export GPG_TTY=${GPG_TTY:-$(tty)}
 
+    # Restrict permissions of any new files to
+    # only the current user.
     umask 077
 
     # Ensure that we leave the terminal in a usable
