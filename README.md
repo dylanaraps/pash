@@ -144,5 +144,5 @@ Set the environment variable `PASH_CLIP` to a command.
 
 ```sh
 # Default: 'xclip -selection clipboard'.
-export PASH_DIR='xclip -selection clipboard'
+export PASH_CLIP='xclip -selection clipboard'
 ```
