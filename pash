@@ -178,6 +178,10 @@ main() {
     # state on exit or Ctrl+C.
     trap 'stty echo icanon' INT EXIT
 
+    # Ensure that debug mode is never enabled to
+    # prevent the password from leaking.
+    set +x
+
     case $1 in
         a*) pw_add  "$2" ;;
         c*) pw_copy "$2" ;;
