@@ -18,6 +18,9 @@ pw_add() {
     else
         printf 'Enter password: '
 
+        # Disable terminal printing while the user inputs their
+        # password. POSIX 'read' has no '-s' flag which would
+        # effectively do the same thing.
         stty -echo
         read -r pass
         stty echo
