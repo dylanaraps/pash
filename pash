@@ -6,20 +6,8 @@ pw_add() {
     name=$1
 
     if yn "Generate a password?"; then
-        # Use 'gpg' to generate the password. This could have
-        # been 'openssl', '/dev/[u]random' or another utility,
-        # however sticking to 'gpg' removes the need for another
-        # dependency.
-        #
-        # The '-a' flag outputs the random bytes as a 'base64'
-        # encoded string to allow for the password to be used as
-        # well, a password.
-        #
-        # The 'cut' is required to actually truncate the password
-        # to the set length as the 'base64' encoding makes the
-        # resulting string longer than the given length.
-        pass=$("$gpg" -a --gen-random 1 "${PASH_LENGTH:-50}" |\
-               cut -c -"${PASH_LENGTH:-50}")
+        pass=$(tr -dc "${PASH_PATTERN:-_A-Z-a-z-0-9}" </dev/urandom |
+            dd ibs=1 obs=1 count="${PASH_LENGTH:-50}" 2>/dev/null)
 
     else
         printf 'Enter password: '
