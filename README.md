@@ -25,11 +25,11 @@ pash
     * [How can I use a public key?](#how-can-i-use-a-public-key)
     * [How do I set the password length?](#how-do-i-set-the-password-length)
     * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
-    * [How do I rename an entry?](#how-do-i-rename-an-entry)
-    * [How can I extend `pash`?](#how-can-i-extend-pash)
     * [How do I change the clipboard tool?](#how-do-i-change-the-clipboard-tool)
     * [How do I change the password generation pattern?](#how-do-i-change-the-password-generation-pattern)
+    * [How do I rename an entry?](#how-do-i-rename-an-entry)
     * [How can I migrate from `pass` to `pash`?](#how-can-i-migrate-from-pass-to-pash)
+    * [How can I extend `pash`?](#how-can-i-extend-pash)
 
 <!-- vim-markdown-toc -->
 
@@ -124,9 +124,47 @@ export PASH_DIR=~/.local/share/pash
 PASH_DIR=/mnt/drive/pash pash list
 ```
 
+### How do I change the clipboard tool?
+
+Set the environment variable `PASH_CLIP` to a command.
+
+```sh
+# Default: 'xclip -selection clipboard'.
+export PASH_CLIP='xclip -selection clipboard'
+
+# This can also be used as a one-off.
+PASH_CLIP='xclip -selection clipboard' pash copy github
+```
+
+### How do I change the password generation pattern?
+
+Set the environment variable `PASH_PATTERN` to a valid `tr` string.
+
+```sh
+# Default: '_A-Z-a-z-0-9'.
+export PASH_PATTERN=_A-Z-a-z-0-9
+
+# This can also be used as a one-off.
+PASH_PATTERN=_A-Z-a-z-0-9 pash add hackernews
+```
+
 ### How do I rename an entry?
 
 It's a file! Standard UNIX utilities can be used here.
+
+
+### How can I migrate from `pass` to `pash`?
+
+I cannot guarantee 100% compatibility with the stores from `pass` and other tools, however users have reported that `pash` does in fact work fine with `pass`' store.
+
+Add the following to your `.shellrc` or `.profile`.
+
+```
+read -r PASH_KEYID < "$PASH_DIR/.gpg-id"
+
+export PASH_DIR=${PASSWORD_STORE_DIR:-$HOME/.password-store}
+export PASH_KEYID
+```
 
 ### How can I extend `pash`?
 
@@ -146,35 +184,4 @@ pash() {
         ;;
     esac
 }
-```
-
-### How do I change the clipboard tool?
-
-Set the environment variable `PASH_CLIP` to a command.
-
-```sh
-# Default: 'xclip -selection clipboard'.
-export PASH_CLIP='xclip -selection clipboard'
-```
-
-### How do I change the password generation pattern?
-
-Set the environment variable `PASH_PATTERN` to a valid `tr` string.
-
-```sh
-# Default: '_A-Z-a-z-0-9'.
-export PASH_PATTERN=_A-Z-a-z-0-9
-```
-
-### How can I migrate from `pass` to `pash`?
-
-I cannot guarantee 100% compatibility with the stores from `pass` and other tools, however users have reported that `pash` does in fact work fine with `pass`' store.
-
-Add the following to your `.shellrc` or `.profile`.
-
-```
-read -r PASH_KEYID < "$PASH_DIR/.gpg-id"
-
-export PASH_DIR=${PASSWORD_STORE_DIR:-$HOME/.password-store}
-export PASH_KEYID
 ```
