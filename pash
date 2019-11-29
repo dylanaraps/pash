@@ -111,7 +111,7 @@ die() {
 }
 
 usage() { printf %s "\
-pash 2.0.1 - simple password manager.
+pash 2.1.0 - simple password manager.
 
 => [a]dd  [name] - Create a new password entry.
 => [c]opy [name] - Copy entry to the clipboard.
