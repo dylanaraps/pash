@@ -6,6 +6,12 @@ pw_add() {
     name=$1
 
     if yn "Generate a password?"; then
+        # Generate a password by reading '/dev/urandom' with the
+        # 'tr' command to translate the random bytes into a
+        # configurable character set.
+        #
+        # The 'dd' command is then used to read only the desired
+        # password length.
         pass=$(tr -dc "${PASH_PATTERN:-_A-Z-a-z-0-9}" </dev/urandom |
             dd ibs=1 obs=1 count="${PASH_LENGTH:-50}" 2>/dev/null)
 
@@ -19,7 +25,7 @@ pw_add() {
         printf '\n'
     fi
 
-    [ "$pass" ] || die "Failed to generate a password."
+    [ -z "$pass" ] || die "Failed to generate a password."
 
     # Mimic the use of an array for storing arguments by... using
     # the function's argument list. This is very apt isn't it?
