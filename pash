@@ -35,9 +35,7 @@ pw_add() {
         set -- -c
     fi
 
-    # Use 'gpg' to store the password in an encrypted file. The
-    # 'GPG_TTY' environment variable is set to workaround cases
-    # where 'gpg' cannot find an attached terminal.
+    # Use 'gpg' to store the password in an encrypted file.
     printf %s "$pass" | "$gpg" "$@" -o "$name.gpg" &&
         printf '%s\n' "Saved '$name' to the store."
 }
