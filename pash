@@ -60,7 +60,7 @@ pw_show() {
 }
 
 pw_copy() {
-    # Disable warning against words-splitting as it is safe
+    # Disable warning against word-splitting as it is safe
     # and intentional (globbing is disabled).
     # shellcheck disable=2086
     pw_show "$1" | ${PASH_CLIP:-xclip -selection clipboard}
