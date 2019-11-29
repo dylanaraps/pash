@@ -28,6 +28,7 @@ pash
     * [How do I rename an entry?](#how-do-i-rename-an-entry)
     * [How can I extend `pash`?](#how-can-i-extend-pash)
     * [How do I change the clipboard tool?](#how-do-i-change-the-clipboard-tool)
+    * [How can I migrate from `pass` to `pash`?](#how-can-i-migrate-from-pass-to-pash)
 
 <!-- vim-markdown-toc -->
 
@@ -145,4 +146,17 @@ Set the environment variable `PASH_CLIP` to a command.
 ```sh
 # Default: 'xclip -selection clipboard'.
 export PASH_CLIP='xclip -selection clipboard'
+```
+
+### How can I migrate from `pass` to `pash`?
+
+I cannot guarantee 100% compatibility with the stores from `pass` and other tools, however users have reported that `pash` does in fact work fine with `pass`' store.
+
+Add the following to your `.shellrc` or `.profile`.
+
+```
+read -r PASH_KEYID < "$PASH_DIR/.gpg-id"
+
+export PASH_DIR=${PASSWORD_STORE_DIR:-$HOME/.password-store}
+export PASH_KEYID
 ```
