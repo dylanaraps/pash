@@ -155,7 +155,7 @@ It's a file! Standard UNIX utilities can be used here.
 
 ### How can I migrate from `pass` to `pash`?
 
-I cannot guarantee 100% compatibility with the stores from `pass` and other tools, however users have reported that `pash` does in fact work fine with `pass`' store.
+I cannot guarantee 100% compatibility with the stores from `pass` as `pash` wasn't written as a 1:1 replacement, however users have reported that `pash` does in fact work fine with `pass`' store.
 
 Add the following to your `.shellrc` or `.profile`.
 
