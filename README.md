@@ -28,6 +28,7 @@ pash
     * [How do I rename an entry?](#how-do-i-rename-an-entry)
     * [How can I extend `pash`?](#how-can-i-extend-pash)
     * [How do I change the clipboard tool?](#how-do-i-change-the-clipboard-tool)
+    * [How do I change the password generation pattern?](#how-do-i-change-the-password-generation-pattern)
     * [How can I migrate from `pass` to `pash`?](#how-can-i-migrate-from-pass-to-pash)
 
 <!-- vim-markdown-toc -->
@@ -62,6 +63,7 @@ OPTIONS
 
 Using a key pair: export PASH_KEYID=XXXXXXXX
 Password length:  export PASH_LENGTH=50
+Password pattern: export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:   export PASH_DIR=~/.local/share/pash
 Clipboard tool:   export PASH_CLIP='xclip -selection clipboard'
 ```
@@ -153,6 +155,15 @@ Set the environment variable `PASH_CLIP` to a command.
 ```sh
 # Default: 'xclip -selection clipboard'.
 export PASH_CLIP='xclip -selection clipboard'
+```
+
+### How do I change the password generation pattern?
+
+Set the environment variable `PASH_PATTERN` to a valid `tr` string.
+
+```sh
+# Default: '_A-Z-a-z-0-9'.
+export PASH_PATTERN=_A-Z-a-z-0-9
 ```
 
 ### How can I migrate from `pass` to `pash`?

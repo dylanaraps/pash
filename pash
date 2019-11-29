@@ -114,6 +114,7 @@ pash 2.0.1 - simple password manager.
 
 Using a key pair: export PASH_KEYID=XXXXXXXX
 Password length:  export PASH_LENGTH=50
+Password pattern: export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:   export PASH_DIR=~/.local/share/pash
 Clipboard tool:   export PASH_CLIP='xclip -selection clipboard'
 "
