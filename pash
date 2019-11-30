@@ -84,15 +84,14 @@ pw_copy() {
 }
 
 pw_list() {
-    set +f
-    find -- * -type f -name \*.gpg
+    find . -type f -name \*.gpg | sed 's/..//;s/\.gpg$//'
 }
 
 pw_tree() {
     command -v tree >/dev/null 2>&1 ||
         die "'tree' command not found"
 
-    tree --noreport
+    tree --noreport | sed 's/\.gpg$//'
 }
 
 yn() {
@@ -209,12 +208,8 @@ main() {
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
-
-        # TODO: Better handle the removal
-        #       of '.gpg' from list output.
-        l*) pw_list | sed 's/\.gpg$//' ;;
-        t*) pw_tree | sed 's/\.gpg$//' ;;
-
+        l*) pw_list ;;
+        t*) pw_tree ;;
         *)  usage
     esac
 }
