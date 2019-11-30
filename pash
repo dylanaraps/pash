@@ -84,15 +84,59 @@ pw_copy() {
 }
 
 pw_list() {
-    set +f
-    find -- * -type f -name \*.gpg
+    find . -type f -name \*.gpg | sed 's#^\./##;s#\.gpg$##'
 }
 
 pw_tree() {
-    command -v tree >/dev/null 2>&1 ||
-        die "'tree' command not found"
+    # This is a simple 'tree' implementation based
+    # around counting forward slashes in strings
+    # to calculate the nest level.
+    #
+    # Minus the 'find' call to grab the recursive
+    # file lists, this is entirely shell!
+    find . -mindepth 1 | while read -r item || {
+        # As this implementation is naive, we need
+        # to round off the bottom of the output.
+        #
+        # This will execute once on the last
+        # iteration of the while loop.
+        #
+        # This simply uses the last nest level to
+        # close the tree.
+        printf └
+        for _; do printf ──┴; done
+        printf '\b┘\n'
 
-    tree --noreport
+        break
+    }; do
+        [ -d "$path" ] && suffix=/ || suffix=
+
+        # Strip the leading './' and the
+        # trailing '.gpg' where applicable.
+        path=${item##./}
+        path=${item%%.gpg}
+
+        # Split the string on each forward slash
+        # to count the "nest level" of each
+        # file and directory.
+        #
+        # The shift is added as the resulting
+        # count will always be one higher than
+        # intended.
+        #
+        # Disable warning about word splitting as
+        # it is intentional here and globbing is
+        # disabled.
+        # shellcheck disable=2086
+        IFS=/ set -- $path; shift
+
+        # Print the dividers from 1-nest_level.
+        # This is a simple iteration over the
+        # shifted argument list.
+        for _; do printf '│  '; done
+
+        printf '├─ %s\n' "${path##*/}${suffix}"
+    done
 }
 
 yn() {
@@ -209,12 +253,8 @@ main() {
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
-
-        # TODO: Better handle the removal
-        #       of '.gpg' from list output.
-        l*) pw_list | sed 's/\.gpg$//' ;;
-        t*) pw_tree | sed 's/\.gpg$//' ;;
-
+        l*) pw_list ;;
+        t*) pw_tree ;;
         *)  usage
     esac
 }
