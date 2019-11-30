@@ -120,8 +120,6 @@ yn() {
 }
 
 sread() {
-    # This is a simple wrapper around POSIX 'read' to print
-    # a prompt and disable printing of user input.
     printf '%s: ' "$2"
 
     # Disable terminal printing while the user inputs their
