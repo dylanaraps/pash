@@ -131,6 +131,10 @@ PASH_DIR=/mnt/drive/pash pash list
 
 Set the environment variable `PASH_CLIP` to a command.
 
+**NOTE**: I advise that you disable clipboard history in managers like KDE's `klipper` before copying passwords through `pash`. Your Desktop Environment's clipboard manager may read entries from the X clipboard when `xclip` is used.
+
+**NOTE**: `pash` will correctly clear all clipboards which have history disabled.
+
 ```sh
 # Default: 'xclip -sel c'.
 export PASH_CLIP='xclip -sel c'
