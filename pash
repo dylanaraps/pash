@@ -58,7 +58,7 @@ pw_copy() {
     # Disable warning against word-splitting as it is safe
     # and intentional (globbing is disabled).
     # shellcheck disable=2086
-    : "${PASH_CLIP:=xclip -selection clipboard}"
+    : "${PASH_CLIP:=xclip -sel c}"
 
     printf 'Clearing clipboard in "%s" seconds.\n' \
         "${PASH_TIMEOUT:=10}"
@@ -138,7 +138,7 @@ Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
 Password pattern:  export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:    export PASH_DIR=~/.local/share/pash
-Clipboard tool:    export PASH_CLIP='xclip -selection clipboard'
+Clipboard tool:    export PASH_CLIP='xclip -sel c'
 Clipboard timeout: export PASH_TIMEOUT=10
 "
 exit 1

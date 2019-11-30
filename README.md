@@ -66,7 +66,7 @@ Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
 Password pattern:  export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:    export PASH_DIR=~/.local/share/pash
-Clipboard tool:    export PASH_CLIP='xclip -selection clipboard'
+Clipboard tool:    export PASH_CLIP='xclip -sel c'
 Clipboard timeout: export PASH_TIMEOUT=10
 ```
 
@@ -131,11 +131,11 @@ PASH_DIR=/mnt/drive/pash pash list
 Set the environment variable `PASH_CLIP` to a command.
 
 ```sh
-# Default: 'xclip -selection clipboard'.
-export PASH_CLIP='xclip -selection clipboard'
+# Default: 'xclip -sel c'.
+export PASH_CLIP='xclip -sel c'
 
 # This can also be used as a one-off.
-PASH_CLIP='xclip -selection clipboard' pash copy github
+PASH_CLIP='xclip -sel c' pash copy github
 ```
 
 ### How do I change the clipboard timeout?
