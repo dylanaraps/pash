@@ -68,10 +68,10 @@ pw_copy() {
     #
     # If the 'sleep' fails, kill the script. This is the
     # simplest method of aborting from a subshell.
-    (
+    {
         sleep "$PASH_TIMEOUT" || kill 0
-        printf '' | $PASH_CLIP
-    ) &
+        $PASH_CLIP </dev/null
+    } &
 
     pw_show "$1" | $PASH_CLIP
 }
