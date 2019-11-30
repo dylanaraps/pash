@@ -106,12 +106,12 @@ pw_tree() {
 
         break
     }; do
-        [ -d "$item" ] && suffix=/ || suffix=
+        glob "$item" './.*' && continue
 
-        # Strip the leading './' and the trailing '.gpg' if
-        # the path item contains them.
         path=${item##./}
         path=${path%%.gpg}
+
+        [ -d "$item" ] && suffix=/ || suffix=
 
         # Split the string on each forward slash to count the
         # "nest level" of each file and directory.
