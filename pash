@@ -62,7 +62,7 @@ pw_copy() {
 }
 
 pw_list() {
-    if hash tree 2>/dev/null; then
+    if command -v tree 2>/dev/null; then
         tree --noreport
 
     else
@@ -136,8 +136,8 @@ main() {
 
     # Look for both 'gpg' and 'gpg2',
     # preferring 'gpg2' if it is available.
-    hash gpg  2>/dev/null && gpg=gpg
-    hash gpg2 2>/dev/null && gpg=gpg2
+    command -v gpg  2>/dev/null && gpg=gpg
+    command -v gpg2 2>/dev/null && gpg=gpg2
 
     [ "$gpg" ] ||
         die "GPG not found."
