@@ -46,7 +46,7 @@ pw_add() {
     #
     # Heredocs are sometimes implemented via temporary files,
     # however this is typically done using 'mkstemp()' which
-    # is more secure than '/proc'.
+    # is more secure than a leak in '/proc'.
     "$gpg" "$@" -o "$name.gpg" <<-EOF &&
 		$pass
 	EOF
