@@ -122,7 +122,11 @@ pw_tree() {
         # Disable warning about word splitting as it is
         # intentional here and globbing is disabled.
         # shellcheck disable=2086
-        IFS=/ set -- $path; shift
+        {
+            IFS=/
+            set -- $path
+            shift
+        }
 
         # Print the dividers from 1-nest_level. This is a simple
         # iteration over the shifted argument list.
