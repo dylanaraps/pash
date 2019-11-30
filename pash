@@ -45,11 +45,10 @@ pw_add() {
     # Heredocs are sometimes implemented via temporary files,
     # however this is typically done using 'mkstemp()' which
     # is more secure than '/proc'.
-    "$gpg" "$@" -o "$name.gpg" <<-EOF
+    "$gpg" "$@" -o "$name.gpg" <<-EOF && \
+        printf '%s\n' "Saved '$name' to the store."
 		$pass
 	EOF
-
-    [ $# = 0 ] && printf '%s\n' "Saved '$name' to the store."
 }
 
 pw_del() {
