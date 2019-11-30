@@ -28,7 +28,7 @@ pw_add() {
         printf '\n'
     fi
 
-    [ "$pass" ] || die "Failed to generate a password."
+    [ "$pass" ] || die "Failed to generate a password"
 
     # Mimic the use of an array for storing arguments by... using
     # the function's argument list. This is very apt isn't it?
@@ -130,7 +130,7 @@ glob() {
 }
 
 die() {
-    printf 'error: %s\n' "$1" >&2
+    printf 'error: %s.\n' "$1" >&2
     exit 1
 }
 
@@ -166,31 +166,31 @@ main() {
     command -v gpg2 >/dev/null 2>&1 && gpg=gpg2
 
     [ "$gpg" ] ||
-        die "GPG not found."
+        die "GPG not found"
 
     mkdir -p "$PASH_DIR" ||
-        die "Couldn't create password directory."
+        die "Couldn't create password directory"
 
     cd "$PASH_DIR" ||
-        die "Can't access password directory."
+        die "Can't access password directory"
 
     glob "$1" '[acds]*' && [ -z "$2" ] &&
-        die "Missing [name] argument."
+        die "Missing [name] argument"
 
     glob "$1" '[cds]*' && [ ! -f "$2.gpg" ] &&
-        die "Pass file '$2' doesn't exist."
+        die "Pass file '$2' doesn't exist"
 
     glob "$1" 'a*' && [ -f "$2.gpg" ] &&
-        die "Pass file '$2' already exists."
+        die "Pass file '$2' already exists"
 
     glob "$2" '*/*' && glob "$2" '*../*' &&
-        die "Category went out of bounds."
+        die "Category went out of bounds"
 
     glob "$2" '/*' &&
-        die "Category can't start with '/'."
+        die "Category can't start with '/'"
 
     glob "$2" '*/*' && { mkdir -p "${2%/*}" ||
-        die "Couldn't create category '${2%/*}'."; }
+        die "Couldn't create category '${2%/*}'"; }
 
     # Set 'GPG_TTY' to the current 'TTY' if it
     # is unset. Fixes a somewhat rare `gpg` issue.
