@@ -19,16 +19,15 @@ pw_add() {
             dd ibs=1 obs=1 count="${PASH_LENGTH:-50}" 2>/dev/null)
 
     else
-        printf 'Enter password: '
+        # 'sread()' is a simple wrapper function around 'read'
+        # to prevent user input from being printed to the terminal.
+        sread pass  "Enter password"
+        sread pass2 "Enter password (again)"
 
-        # Disable terminal printing while the user inputs their
-        # password. POSIX 'read' has no '-s' flag which would
-        # effectively do the same thing.
-        stty -echo
-        read -r pass
-        stty echo
-
-        printf '\n'
+        # Disable this check as we dynamically populate the two
+        # passwords using the 'sread()' function.
+        # shellcheck disable=2154
+        [ "$pass" = "$pass2" ] || die "Passwords do not match"
     fi
 
     [ "$pass" ] || die "Failed to generate a password"
@@ -118,6 +117,21 @@ yn() {
     # return status to be used in place of checking for '[yY]'
     # throughout this program.
     glob "$answer" '[yY]'
+}
+
+sread() {
+    # This is a simple wrapper around POSIX 'read' to print
+    # a prompt and disable printing of user input.
+    printf '%s: ' "$2"
+
+    # Disable terminal printing while the user inputs their
+    # password. POSIX 'read' has no '-s' flag which would
+    # effectively do the same thing.
+    stty -echo
+    read -r "$1"
+    stty echo
+
+    printf '\n'
 }
 
 glob() {
