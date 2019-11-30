@@ -75,8 +75,7 @@ pw_copy() {
     # If the 'sleep' fails, kill the script. This is the
     # simplest method of aborting from a subshell.
     [ "$PASH_TIMEOUT" != off ] && {
-        printf 'Clearing clipboard in "%s" seconds.\n' \
-            "${PASH_TIMEOUT:=15}"
+        printf 'Clearing clipboard in "%s" seconds.\n' "${PASH_TIMEOUT:=15}"
 
         sleep "$PASH_TIMEOUT" || kill 0
         $PASH_CLIP </dev/null
