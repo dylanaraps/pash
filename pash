@@ -12,6 +12,9 @@ pw_add() {
         #
         # The 'dd' command is then used to read only the desired
         # password length.
+        #
+        # Regarding usage of '/dev/urandom' instead of '/dev/random'.
+        # See: https://www.2uo.de/myths-about-urandom
         pass=$(LC_ALL=C tr -dc "${PASH_PATTERN:-_A-Z-a-z-0-9}" < /dev/urandom |
             dd ibs=1 obs=1 count="${PASH_LENGTH:-50}" 2>/dev/null)
 
@@ -84,7 +87,7 @@ pw_copy() {
 }
 
 pw_list() {
-    find . -type f -name \*.gpg | sed 's#^\./##;s#\.gpg$##'
+    find . -type f -name \*.gpg | sed 's/..//;s/\.gpg$//'
 }
 
 pw_tree() {
