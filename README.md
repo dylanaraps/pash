@@ -20,11 +20,11 @@ A simple password manager using GPG written in POSIX `sh`.
     * [How does this differ from `pass` or etc?](#how-does-this-differ-from-pass-or-etc)
     * [Where are passwords stored?](#where-are-passwords-stored)
     * [How can I use a public key?](#how-can-i-use-a-public-key)
-    * [How do I set the password length?](#how-do-i-set-the-password-length)
+    * [How do I change the password length?](#how-do-i-change-the-password-length)
+    * [How do I change the password generation pattern?](#how-do-i-change-the-password-generation-pattern)
     * [How do I change the password store location?](#how-do-i-change-the-password-store-location)
     * [How do I change the clipboard tool?](#how-do-i-change-the-clipboard-tool)
     * [How do I change the clipboard timeout?](#how-do-i-change-the-clipboard-timeout)
-    * [How do I change the password generation pattern?](#how-do-i-change-the-password-generation-pattern)
     * [How do I rename an entry?](#how-do-i-rename-an-entry)
     * [How can I migrate from `pass` to `pash`?](#how-can-i-migrate-from-pass-to-pash)
     * [How can I extend `pash`?](#how-can-i-extend-pash)
@@ -98,7 +98,7 @@ export PASH_KEYID=dylan.araps@gmail.com
 PASH_KEYID=XXXXXXXX pash add github
 ```
 
-### How do I set the password length?
+### How do I change the password length?
 
 Set the environment variable `PASH_LENGTH` to a valid integer.
 
@@ -111,6 +111,19 @@ export PASH_LENGTH=50
 # This can also be used as a one-off.
 PASH_LENGTH=10 pash add github
 ```
+
+### How do I change the password generation pattern?
+
+Set the environment variable `PASH_PATTERN` to a valid `tr` string.
+
+```sh
+# Default: '_A-Z-a-z-0-9'.
+export PASH_PATTERN=_A-Z-a-z-0-9
+
+# This can also be used as a one-off.
+PASH_PATTERN=_A-Z-a-z-0-9 pash add hackernews
+```
+
 
 ### How do I change the password store location?
 
@@ -153,18 +166,6 @@ export PASH_TIMEOUT=off
 
 # This can also be used as a one-off.
 PASH_TIMEOUT=5 pash copy github
-```
-
-### How do I change the password generation pattern?
-
-Set the environment variable `PASH_PATTERN` to a valid `tr` string.
-
-```sh
-# Default: '_A-Z-a-z-0-9'.
-export PASH_PATTERN=_A-Z-a-z-0-9
-
-# This can also be used as a one-off.
-PASH_PATTERN=_A-Z-a-z-0-9 pash add hackernews
 ```
 
 ### How do I rename an entry?
