@@ -59,6 +59,7 @@ COMMANDS
 [d]el  [name] - Delete a password entry.
 [l]ist        - List all entries.
 [s]how [name] - Show password for an entry.
+[t]ree        - List all entries in a tree.
 
 OPTIONS
 

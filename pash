@@ -84,13 +84,15 @@ pw_copy() {
 }
 
 pw_list() {
-    if command -v tree >/dev/null 2>&1; then
-        tree --noreport
+    set +f
+    find -- * -type f -name \*.gpg
+}
 
-    else
-        set +f
-        find -- * -type f -name \*.gpg
-    fi
+pw_tree() {
+    command -v tree >/dev/null 2>&1 ||
+        die "'tree' command not found"
+
+    tree --noreport
 }
 
 yn() {
@@ -133,13 +135,14 @@ die() {
 }
 
 usage() { printf %s "\
-pash 2.2.1 - simple password manager.
+pash 2.3.0 - simple password manager.
 
 => [a]dd  [name] - Create a new password entry.
 => [c]opy [name] - Copy entry to the clipboard.
 => [d]el  [name] - Delete a password entry.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
+=> [t]ree        - List all entries in a tree.
 
 Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
@@ -211,6 +214,7 @@ main() {
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
         l*) pw_list | sed 's/\.gpg$//' ;;
+        t*) pw_tree ;;
         *)  usage
     esac
 }
