@@ -60,11 +60,16 @@ pw_copy() {
     # shellcheck disable=2086
     : "${PASH_CLIP:=xclip -selection clipboard}"
 
+    printf 'Clearing clipboard in "%s" seconds.\n' \
+        "${PASH_TIMEOUT:=10}"
+
     # Wait in the background for the password timeout and
     # clear the clipboard when the timer runs out.
+    #
+    # If the 'sleep' fails, kill the script. This is the
+    # simplest method of aborting from a subshell.
     (
-        printf 'Clearing clipboard in %d seconds.\n' "${PASH_TIMEOUT:=10}"
-        sleep "$PASH_TIMEOUT"
+        sleep "$PASH_TIMEOUT" || kill 0
         printf '' | $PASH_CLIP
     ) &
 
