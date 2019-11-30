@@ -77,7 +77,7 @@ Clipboard timeout: export PASH_TIMEOUT=15 ('off' to disable)
 
 I was looking for a CLI password manager (*written in shell*) and wasn't happy with the options I had found. They either had multiple instances of `eval` (*on user inputted data*), lots of unsafe shell (*nowhere near being `shellcheck` compliant.*) or they were overly complex. The opposites for what I'd want in a password manager.
 
-I decided to write my own. `pash` is written in POSIX `sh` and the codebase is minimal (*100~ lines*).
+I decided to write my own. `pash` is written in POSIX `sh` and the codebase is minimal (*120~ LOC minus blank lines and comments*).
 
 ### Where are passwords stored?
 
