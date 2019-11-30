@@ -93,7 +93,7 @@ pw_tree() {
     #
     # Minus the 'find' call to grab the recursive file list,
     # this is entirely shell!
-    find . -mindepth 1 | while read -r item || {
+    find . -mindepth 1 | sort | while read -r item || {
         # As this implementation is naive, we need to round off
         # the bottom of the output.
         #
@@ -106,12 +106,12 @@ pw_tree() {
 
         break
     }; do
-        [ -d "$path" ] && suffix=/ || suffix=
+        [ -d "$item" ] && suffix=/ || suffix=
 
         # Strip the leading './' and the trailing '.gpg' if
         # the path item contains them.
         path=${item##./}
-        path=${item%%.gpg}
+        path=${path%%.gpg}
 
         # Split the string on each forward slash to count the
         # "nest level" of each file and directory.
