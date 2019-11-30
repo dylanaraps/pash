@@ -60,15 +60,15 @@ pw_copy() {
     # shellcheck disable=2086
     : "${PASH_CLIP:=xclip -sel c}"
 
-    printf 'Clearing clipboard in "%s" seconds.\n' \
-        "${PASH_TIMEOUT:=10}"
-
     # Wait in the background for the password timeout and
     # clear the clipboard when the timer runs out.
     #
     # If the 'sleep' fails, kill the script. This is the
     # simplest method of aborting from a subshell.
-    {
+    [ "$PASH_TIMEOUT" != off ] && {
+        printf 'Clearing clipboard in "%s" seconds.\n' \
+            "${PASH_TIMEOUT:=10}"
+
         sleep "$PASH_TIMEOUT" || kill 0
         $PASH_CLIP </dev/null
     } &
@@ -139,7 +139,7 @@ Password length:   export PASH_LENGTH=50
 Password pattern:  export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:    export PASH_DIR=~/.local/share/pash
 Clipboard tool:    export PASH_CLIP='xclip -sel c'
-Clipboard timeout: export PASH_TIMEOUT=10
+Clipboard timeout: export PASH_TIMEOUT=10 ('off' to disable)
 "
 exit 1
 }

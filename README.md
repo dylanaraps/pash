@@ -67,7 +67,7 @@ Password length:   export PASH_LENGTH=50
 Password pattern:  export PASH_PATTERN=_A-Z-a-z-0-9
 Store location:    export PASH_DIR=~/.local/share/pash
 Clipboard tool:    export PASH_CLIP='xclip -sel c'
-Clipboard timeout: export PASH_TIMEOUT=10
+Clipboard timeout: export PASH_TIMEOUT=10 ('off' to disable)
 ```
 
 ## FAQ
@@ -140,11 +140,14 @@ PASH_CLIP='xclip -sel c' pash copy github
 
 ### How do I change the clipboard timeout?
 
-Set the environment variable `PASH_TIMEOUT` to a command.
+Set the environment variable `PASH_TIMEOUT` to a valid `sleep` interval or `off` to disable the feature.
 
 ```sh
 # Default: '10'
 export PASH_TIMEOUT=10
+
+# Disable timeout.
+export PASH_TIMEOUT=off
 
 # This can also be used as a one-off.
 PASH_TIMEOUT=5 pash copy github
