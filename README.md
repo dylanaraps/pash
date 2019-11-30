@@ -2,16 +2,13 @@
 
 A simple password manager using GPG written in POSIX `sh`.
 
-```
-pash
-├─ dev/
-│  ├─ github
-├─ internet/
-│  ├─ graalians
-│  ├─ pixeljoint
-│  ├─ nixers
-└──┘
-```
+- Written in safe and [shellcheck](https://www.shellcheck.net/) compliant POSIX `sh`.
+- Only `120~` LOC (*minus blank lines and comments*).
+- Compatible with `pass`'s password store.
+- Clears the clipboard after a timeout.
+- Configurable password generation using `/dev/urandom`.
+- Guards against `set -x` and `/proc` leakage.
+- Easily extendible through the shell.
 
 ## Table of Contents
 
