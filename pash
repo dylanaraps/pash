@@ -39,8 +39,17 @@ pw_add() {
     fi
 
     # Use 'gpg' to store the password in an encrypted file.
-    printf %s "$pass" | "$gpg" "$@" -o "$name.gpg" &&
-        printf '%s\n' "Saved '$name' to the store."
+    # A heredoc is used here instead of a 'printf' to avoid
+    # leaking the password through the '/proc' filesystem.
+    #
+    # Heredocs are sometimes implemented via temporary files,
+    # however this is typically done using 'mkstemp()' which
+    # is more secure than '/proc'.
+    "$gpg" "$@" -o "$name.gpg" <<-EOF
+		$pass
+	EOF
+
+    [ $# = 0 ] && printf '%s\n' "Saved '$name' to the store."
 }
 
 pw_del() {
