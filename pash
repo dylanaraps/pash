@@ -209,8 +209,12 @@ main() {
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
+
+        # TODO: Better handle the removal
+        #       of '.gpg' from list output.
         l*) pw_list | sed 's/\.gpg$//' ;;
-        t*) pw_tree ;;
+        t*) pw_tree | sed 's/\.gpg$//' ;;
+
         *)  usage
     esac
 }
