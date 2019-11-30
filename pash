@@ -67,7 +67,22 @@ pw_copy() {
     # Disable warning against word-splitting as it is safe
     # and intentional (globbing is disabled).
     # shellcheck disable=2086
-    pw_show "$1" | ${PASH_CLIP:-xclip -selection clipboard}
+    : "${PASH_CLIP:=xclip -sel c}"
+
+    # Wait in the background for the password timeout and
+    # clear the clipboard when the timer runs out.
+    #
+    # If the 'sleep' fails, kill the script. This is the
+    # simplest method of aborting from a subshell.
+    [ "$PASH_TIMEOUT" != off ] && {
+        printf 'Clearing clipboard in "%s" seconds.\n' \
+            "${PASH_TIMEOUT:=15}"
+
+        sleep "$PASH_TIMEOUT" || kill 0
+        $PASH_CLIP </dev/null
+    } &
+
+    pw_show "$1" | $PASH_CLIP
 }
 
 pw_list() {
@@ -128,11 +143,12 @@ pash 2.1.0 - simple password manager.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
 
-Using a key pair: export PASH_KEYID=XXXXXXXX
-Password length:  export PASH_LENGTH=50
-Password pattern: export PASH_PATTERN=_A-Z-a-z-0-9
-Store location:   export PASH_DIR=~/.local/share/pash
-Clipboard tool:   export PASH_CLIP='xclip -selection clipboard'
+Using a key pair:  export PASH_KEYID=XXXXXXXX
+Password length:   export PASH_LENGTH=50
+Password pattern:  export PASH_PATTERN=_A-Z-a-z-0-9
+Store location:    export PASH_DIR=~/.local/share/pash
+Clipboard tool:    export PASH_CLIP='xclip -sel c'
+Clipboard timeout: export PASH_TIMEOUT=15 ('off' to disable)
 "
 exit 1
 }
