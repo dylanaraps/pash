@@ -89,7 +89,7 @@ pw_list() {
 
     else
         set +f
-        find -- * -type f
+        find -- * -type f -name \*.gpg
     fi
 }
 
