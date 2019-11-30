@@ -7,7 +7,7 @@ A simple password manager using GPG written in POSIX `sh`.
 - Compatible with `pass`'s password store.
 - Clears the clipboard after a timeout.
 - Configurable password generation using `/dev/urandom`.
-- Guards against `set -x` and `/proc` leakage.
+- Guards against `set -x`, `ps` and `/proc` leakage.
 - Easily extendible through the shell.
 
 ## Table of Contents
