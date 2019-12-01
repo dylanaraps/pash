@@ -175,9 +175,6 @@ exit 1
 main() {
     : "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}"
 
-    [ "$1" = '-?' ] || [ -z "$1" ] &&
-        usage
-
     # Look for both 'gpg' and 'gpg2',
     # preferring 'gpg2' if it is available.
     command -v gpg  >/dev/null 2>&1 && gpg=gpg
@@ -241,4 +238,4 @@ set +x
 # to avoid insecurities with word-splitting.
 set -f
 
-main "$@"
+[ "$1" ] || usage && main "$@"
