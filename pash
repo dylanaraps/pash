@@ -169,7 +169,7 @@ Store location:    export PASH_DIR=~/.local/share/pash
 Clipboard tool:    export PASH_CLIP='xclip -sel c'
 Clipboard timeout: export PASH_TIMEOUT=15 ('off' to disable)
 "
-exit 1
+exit 0
 }
 
 main() {
