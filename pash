@@ -4,6 +4,15 @@
 
 pw_add() {
     name=$1
+    multiline=$2
+
+    # Take the flag out of the positional parameter array
+    for arg in "$@"
+    do
+        shift
+        [ "$arg" = true ] || [ "$arg" = false ] && continue
+        set -- "$@" "$arg"
+    done
 
     if yn "Generate a password?"; then
         # Generate a password by reading '/dev/urandom' with the
@@ -31,6 +40,18 @@ pw_add() {
     fi
 
     [ "$pass" ] || die "Failed to generate a password"
+
+    if [ "$multiline" ]; then
+        line="dummy"
+        nl="
+"
+        echo "Enter additional contents of $name and press enter on empty line when finished"
+        until [ "$line" = "" ]
+        do
+            read -r line
+            [ "$line" != "" ] && pass="${pass}${nl}${line}"
+        done
+    fi
 
     # Mimic the use of an array for storing arguments by... using
     # the function's argument list. This is very apt isn't it?
@@ -155,12 +176,12 @@ die() {
 usage() { printf %s "\
 pash 2.3.0 - simple password manager.
 
-=> [a]dd  [name] - Create a new password entry.
-=> [c]opy [name] - Copy entry to the clipboard.
-=> [d]el  [name] - Delete a password entry.
-=> [l]ist        - List all entries.
-=> [s]how [name] - Show password for an entry.
-=> [t]ree        - List all entries in a tree.
+=> [a]dd -[-m]ultiline  [name] - Create a new password entry.
+=> [c]opy               [name] - Copy entry to the clipboard.
+=> [d]el                [name] - Delete a password entry.
+=> [l]ist                      - List all entries.
+=> [s]how               [name] - Show password for an entry.
+=> [t]ree                      - List all entries in a tree.
 
 Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
@@ -174,6 +195,21 @@ exit 0
 
 main() {
     : "${PASH_DIR:=${XDG_DATA_HOME:=$HOME/.local/share}/pash}"
+
+    multiline=false
+
+    # Take the flag out of the positional parameter array
+    for arg in "$@"
+    do
+        shift
+        case $arg in
+            *-m*)
+                multiline=true
+                continue
+                ;;
+        esac
+        set -- "$@" "$arg"
+    done
 
     # Look for both 'gpg' and 'gpg2',
     # preferring 'gpg2' if it is available.
@@ -220,7 +256,7 @@ main() {
     trap 'stty echo icanon' INT EXIT
 
     case $1 in
-        a*) pw_add  "$2" ;;
+        a*) pw_add  "$2" "$multiline" ;;
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
