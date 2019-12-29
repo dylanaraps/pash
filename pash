@@ -107,7 +107,9 @@ pw_copy() {
         $PASH_CLIP </dev/null
     } &
 
-    pw_show "$1" | $PASH_CLIP
+    pass=$(pw_show "$1")
+    echo "${pass%%'
+'*}" | $PASH_CLIP
 }
 
 pw_list() {
