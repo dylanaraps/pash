@@ -41,7 +41,7 @@ pw_add() {
 
     [ "$pass" ] || die "Failed to generate a password"
 
-    if [ "$multiline" ]; then
+    if [ "$multiline" = true ]; then
         line="dummy"
         nl="
 "
