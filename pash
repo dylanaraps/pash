@@ -72,7 +72,13 @@ pw_copy() {
     # Disable warning against word-splitting as it is safe
     # and intentional (globbing is disabled).
     # shellcheck disable=2086
-    : "${PASH_CLIP:=xclip -sel c}"
+    if [ -n "$WAYLAND_DISPLAY" ]; then
+        : "${PASH_CLIP:=wl-copy}"
+    elif [ -n "$ANDROID_DATA" ]; then
+        : "${PASH_CLIP:=termux-clipboard-set}"
+    else # assume X11
+        : "${PASH_CLIP:=xclip -sel c}"
+    fi
 
     # Wait in the background for the password timeout and
     # clear the clipboard when the timer runs out.
