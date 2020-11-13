@@ -94,10 +94,52 @@ pw_list() {
 }
 
 pw_tree() {
-    command -v tree >/dev/null 2>&1 ||
-        die "'tree' command not found"
+    # This is a simple 'tree' implementation based around
+    # counting forward slashes to calculate the nest level.
+    #
+    # Minus the 'find' and 'sort' calls to grab the recursive
+    # file list, this is entirely shell!
+    find . -mindepth 1 | sort | while read -r item || {
+        # As this implementation is naive, we need to round off
+        # the bottom of the output.
+        #
+        # This will execute once on the last iteration of the
+        # while loop. This simply uses the last nest level to
+        # close the tree.
+        printf └
+        for _; do printf ──┴; done
+        printf '\b┘\n'
 
-    tree --noreport | sed 's/\.gpg$//'
+        break
+    }; do
+        glob "$item" './.*' && continue
+
+        path=${item##./}
+        path=${path%%.gpg}
+
+        [ -d "$item" ] && suffix=/ || suffix=
+
+        # Split the string on each forward slash to count the
+        # "nest level" of each file and directory.
+        #
+        # The shift is added as the resulting count will always
+        # be one higher than intended.
+        #
+        # Disable warning about word splitting as it is
+        # intentional here and globbing is disabled.
+        # shellcheck disable=2086
+        {
+            IFS=/
+            set -- $path
+            shift
+        }
+
+        # Print the dividers from 1-nest_level. This is a simple
+        # iteration over the shifted argument list.
+        for _; do printf '│  '; done
+
+        printf '├─ %s\n' "${path##*/}${suffix}"
+    done
 }
 
 yn() {
