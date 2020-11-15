@@ -100,6 +100,32 @@ pw_tree() {
     tree --noreport | sed 's/\.gpg$//'
 }
 
+pw_edit() {
+    command -v "$EDITOR" >/dev/null 2>&1 ||
+        die "'$EDITOR' command not found"
+
+    passwordFile="$1.gpg"
+
+    if [ "$PASH_KEYID" ]; then
+        set -- --trust-model always -ar "$PASH_KEYID" -e
+    else
+        set -- -c
+    fi
+
+    TMP_DIR="$(mktemp -d -t "pash-edit.XXXXXXXX")"
+    # Get base name of passwordFile; e.g. websites/github.gpg becomes github.gpg
+    TMP_FILE="$TMP_DIR/${passwordFile##*/}"
+
+    # Remove unencrypted password file when done or if following commands fail
+    trap 'rm -rf $TMP_DIR' INT EXIT
+
+    "$gpg" -qo "$TMP_FILE" -d "$passwordFile"
+
+    "$EDITOR" "$TMP_FILE"
+
+    "$gpg" --yes -o "$passwordFile" "$@" "$TMP_FILE"
+}
+
 yn() {
     printf '%s [y/n]: ' "$1"
 
@@ -189,10 +215,10 @@ main() {
     cd "$PASH_DIR" ||
         die "Can't access password directory"
 
-    glob "$1" '[acds]*' && [ -z "$2" ] &&
+    glob "$1" '[aceds]*' && [ -z "$2" ] &&
         die "Missing [name] argument"
 
-    glob "$1" '[cds]*' && [ ! -f "$2.gpg" ] &&
+    glob "$1" '[cdes]*' && [ ! -f "$2.gpg" ] &&
         die "Pass file '$2' doesn't exist"
 
     glob "$1" 'a*' && [ -f "$2.gpg" ] &&
@@ -224,6 +250,7 @@ main() {
         c*) pw_copy "$2" ;;
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
+        e*) pw_edit "$2" ;;
         l*) pw_list ;;
         t*) pw_tree ;;
         *)  usage
