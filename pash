@@ -100,6 +100,41 @@ pw_tree() {
     tree --noreport | sed 's/\.gpg$//'
 }
 
+pw_otp() {
+	command -v oathtool >/dev/null 2>&1 ||
+		die "'oathtool' command not found"
+
+	oathtool -b --totp "$1"
+}
+
+pw_menu() {
+	# ISSUES
+	# - checks continue until end so wofi would always be set
+	# as the menu. this can be easily fixed with a lengthier check
+	# system, or by forcing the user to edit the code. for their
+	# particular menu program.
+	#
+	# - password is not saved to clipboard when "pash menu" is run
+	# from anything but a terminal. so gui menus will not work. a
+	# solution for this that i use on my own system is to open st
+	# and run the gpg decrypt command in that new window and keep
+	# it open for PASH_TIMEOUT seconds. another solution is to type
+	# out the password using xdotool type. another option is to do
+	# what pass does and not require a password. not 100% how that
+	# program does it though.
+	#
+	# right now "pash menu" can be run from the terminal using fzf
+
+	#command -v dmenu >/dev/null 2>&1 && menu="dmenu" ||
+		command -v fzf >/dev/null 2>&1 && menu="fzf" ||
+	#	command -v rofi >/dev/null 2>&1 && menu="rofi" ||
+	#	command -v wofi >/dev/null 2>&1 && menu="wofi" ||
+		die "no menu program found"
+
+	account=$(echo $(pash list) | sed 's/ /\n/g' | $menu)
+	pw_copy $account
+}
+
 yn() {
     printf '%s [y/n]: ' "$1"
 
@@ -161,6 +196,8 @@ pash 2.3.0 - simple password manager.
 => [l]ist        - List all entries.
 => [s]how [name] - Show password for an entry.
 => [t]ree        - List all entries in a tree.
+=> [o]tp  [totp] - Generate 2FA code given a totp secret
+=> [m]enu        - Use a menu program to get password
 
 Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
@@ -226,6 +263,8 @@ main() {
         s*) pw_show "$2" ;;
         l*) pw_list ;;
         t*) pw_tree ;;
+		o*) pw_otp "$2" ;;
+		m*) pw_menu "$2" ;;
         *)  usage
     esac
 }
