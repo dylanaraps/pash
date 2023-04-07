@@ -104,7 +104,7 @@ pw_otp() {
 	command -v oathtool >/dev/null 2>&1 ||
 		die "'oathtool' command not found"
 
-	oathtool -b --totp "$(gpg -d $PASH_DIR/otpsecrets/$1.gpg)"
+	oathtool -b --totp "$(gpg -dq $PASH_DIR/otpsecrets/$1.gpg)"
 }
 
 pw_menu() {
