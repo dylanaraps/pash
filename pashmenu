@@ -1,6 +1,6 @@
 #!/bin/sh
 
-account=$( echo $(pash list) | sed 's/ /\n/g' | dmenu -p "pick an account")
+account=$( echo $(pash list) | sed 's/ /\n/g' | dmenu -p "pick an account" -l 25)
 
-st -g 60x15 -c floatst /bin/sh -c "gpg -d $HOME/.password-store/$account.gpg | xclip -sel c && sleep 15"
+st -g 60x15 -c floatst /bin/sh -c "gpg -d $PASH_DIR/$account.gpg | xclip -sel c && sleep 15"
 xclip -sel c < /dev/null

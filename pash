@@ -45,7 +45,6 @@ pw_add() {
     # leaking the password through the '/proc' filesystem.
     #
     # Heredocs are sometimes implemented via temporary files,
-    # however this is typically done using 'mkstemp()' which
     # is more secure than a leak in '/proc'.
     "$gpg" "$@" -o "$name.gpg" <<-EOF &&
 		$pass
@@ -93,18 +92,66 @@ pw_list() {
     find . -type f -name \*.gpg | sed 's/..//;s/\.gpg$//'
 }
 
-pw_tree() {
-    command -v tree >/dev/null 2>&1 ||
-        die "'tree' command not found"
-
-    tree --noreport | sed 's/\.gpg$//'
-}
-
 pw_otp() {
 	command -v oathtool >/dev/null 2>&1 ||
 		die "'oathtool' command not found"
 
-	oathtool -b --totp "$(gpg -dq $PASH_DIR/otpsecrets/$1.gpg)"
+	[ "$1" = "" ] && usage
+
+	printf "Enter a name: "
+	read name
+
+	case "$1" in
+		"add")
+
+			sread secret "Enter OTP secret"
+			sread secret2 "Enter OTP secret (again)"
+
+			[ "$secret" = "$secret2" ] || die "Secret do not match"
+
+			if [ "$PASH_KEYID" ]; then
+				set -- --trust-model always -aer "$PASH_KEYID"
+			else
+				set -- -c
+			fi
+
+			"$gpg" "$@" -o "$name.gpg" <<-EOF &&
+				$secret
+			EOF
+			printf '%s\n' "Saved '$name' to the otp directory"
+			;;
+
+		"copy")
+			: "${PASH_CLIP:=xclip -sel c}"
+
+			[ "$PASH_TIMEOUT" != off ] && {
+				printf 'Clearing clipboard in "%s" seconds.\n' "${PASH_TIMEOUT:=15}"
+
+				sleep "$PASH_TIMEOUT" || kill 0
+				$PASH_CLIP </dev/null
+			} &
+
+			pw_show $name | $PASH_CLIP
+			;;
+
+		"delete")
+			yn "Delete pass file '$4'?" && {
+				rm -f "$name.gpg"
+				rmdir -p "${4%/*}" 2>/dev/null || :
+			}
+			;;
+
+		"list")
+			find . -type f -name \*.gpg | sed 's/..//;s/\.gpg$//'
+			;;
+
+		"show")
+			oathtool -b --totp "$(gpg -dq $PASH_DIR/$name.gpg)"
+			;;
+
+		*)
+			usage ;;
+	esac
 }
 
 pw_menu() {
@@ -190,14 +237,18 @@ die() {
 usage() { printf %s "\
 pash 2.3.0 - simple password manager.
 
-=> [a]dd  [name] - Create a new password entry.
-=> [c]opy [name] - Copy entry to the clipboard.
-=> [d]el  [name] - Delete a password entry.
-=> [l]ist        - List all entries.
-=> [s]how [name] - Show password for an entry.
-=> [t]ree        - List all entries in a tree.
-=> [o]tp  [totp] - Generate 2FA code given a totp secret
-=> [m]enu        - Use a menu program to get password
+=> [a]dd  [name]	- Create a new password entry.
+=> [c]opy [name]	- Copy entry to the clipboard.
+=> [d]el  [name]	- Delete a password entry.
+=> [s]how [name]	- Show password for an entry.
+=> [o]tp  [option]	- Generate 2FA
+	=> [add]
+	=> [copy] [name]
+	=> [del]  [name]
+	=> [show] [name]
+	=> [list]
+=> [l]ist			- List all entries.
+=> [m]enu			- Use a menu program to get password
 
 Using a key pair:  export PASH_KEYID=XXXXXXXX
 Password length:   export PASH_LENGTH=50
@@ -206,7 +257,7 @@ Store location:    export PASH_DIR=~/.local/share/pash
 Clipboard tool:    export PASH_CLIP='xclip -sel c'
 Clipboard timeout: export PASH_TIMEOUT=15 ('off' to disable)
 "
-exit 0
+	exit 0
 }
 
 main() {
@@ -262,7 +313,6 @@ main() {
         d*) pw_del  "$2" ;;
         s*) pw_show "$2" ;;
         l*) pw_list ;;
-        t*) pw_tree ;;
 		o*) pw_otp "$2" ;;
 		m*) pw_menu "$2" ;;
         *)  usage
